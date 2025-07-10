@@ -149,5 +149,24 @@ body{font-family:'SF Pro Display','SF Pro Text',-apple-system,BlinkMacSystemFont
 }
 @media (max-width:1200px){.cosmic-title{font-size:3rem;}.container{padding:0 1.5rem;}.summary-content{flex-direction:column;text-align:center;gap:1.5rem;}}
 @media (max-width:1024px){.nav-menu-cosmic{display:none;position:absolute;top:100%;left:0;right:0;background:rgba(13,17,23,0.98);backdrop-filter:blur(20px);flex-direction:column;padding:2rem;border-top:1px solid rgba(33,38,45,0.8);box-shadow:0 8px 24px rgba(1,4,9,0.8);}.nav-menu-cosmic.active{display:flex;}.hamburger-cosmic{display:flex;}.cosmic-title{font-size:2.5rem;}.comparison-table{font-size:0.9rem;}.summary-content{flex-direction:column;text-align:center;}}
-@media (max-width:768px){.cosmic-title{font-size:2rem;}.comparison-table-wrapper{overflow-x:auto;}.comparison-table{min-width:800px;}.table-row td{padding:1rem 0.75rem;}.impact-metrics{grid-template-columns:repeat(2,1fr);}.footer-content-cosmic{grid-template-columns:1fr;text-align:center;}}
-@media (max-width:480px){.cosmic-title{font-size:1.8rem;}.nav-actions-cosmic{display:none;}.comparison-table{font-size:0.8rem;min-width:700px;}.impact-metrics{grid-template-columns:1fr;}.summary-content{gap:1rem;}.hero-cosmic{padding:100px 0 60px;}}
+@media (max-width:768px){
+  .cosmic-title{font-size:2rem;}
+  .comparison-table-wrapper{overflow-x:auto;}
+  .comparison-table{min-width:800px;}
+  .table-row td{padding:1rem 0.75rem;}
+  .impact-metrics{grid-template-columns:repeat(2,1fr);}
+  .footer-content-cosmic{grid-template-columns:1fr;text-align:center;}
+  .constellation-overlay{transform:scale(0.7);overflow:hidden;}
+  .starfield-canvas{max-width:100vw;max-height:100vh;overflow:hidden;}
+}
+@media (max-width:480px){
+  .cosmic-title{font-size:1.8rem;}
+  .nav-actions-cosmic{display:none;}
+  .comparison-table{font-size:0.8rem;min-width:700px;}
+  .impact-metrics{grid-template-columns:1fr;}
+  .summary-content{gap:1rem;}
+  .hero-cosmic{padding:100px 0 60px;}
+  .constellation-overlay{transform:scale(0.6);overflow:hidden;}
+  .starfield-canvas{max-width:100vw;max-height:100vh;overflow:hidden;}
+  .github-constellation{width:300px;height:400px;}
+}
