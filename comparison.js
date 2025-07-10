@@ -91,6 +91,7 @@ document.addEventListener('DOMContentLoaded', function () { initStarfieldCanvas(
             { x: 50, y: 5, size: 2.5, name: 'arm2_forearm_right', color: '#FFD700', brightness: 0.8 },
             { x: 45, y: 25, size: 3, name: 'hand2_right', color: '#FFD700', brightness: 0.8 },
             { x: 55, y: 30, size: 3.5, name: 'divine_bow', color: '#654321', brightness: 1.3 },
+            { x: -73, y: 47, size: 3.5, name: 'padma_lotus', color: '#FFB6C1', brightness: 1.4 },
 
             // Divine Body
             { x: -20, y: -10, size: 3, name: 'chest_left', color: '#FFD700', brightness: 1 },
@@ -198,7 +199,10 @@ document.addEventListener('DOMContentLoaded', function () { initStarfieldCanvas(
         stars.forEach(star => { star.x += star.velocity.x; star.y += star.velocity.y; if (star.x < 0) star.x = canvas.width; if (star.x > canvas.width) star.x = 0; if (star.y < 0) star.y = canvas.height; if (star.y > canvas.height) star.y = 0; star.opacity = 0.5 + Math.sin(time * star.twinkleSpeed) * 0.3 }); if (constellationFormed) {
             mahavishnutStars.forEach((star, index) => {
                 const formationDelay = getDivineFormationDelay(star.name); const adjustedProgress = Math.max(0, (time - 2 - formationDelay) / 4); if (star.formationProgress < 1) { star.formationProgress = Math.min(1, adjustedProgress); const progress = easeInOutCubic(star.formationProgress); star.currentX = star.currentX + (star.targetX - star.currentX) * progress * 0.12; star.currentY = star.currentY + (star.targetY - star.currentY) * progress * 0.12; star.opacity = star.targetOpacity * progress } else {
-                    const divineBreath = Math.sin(time * 0.6) * 0.15; const cosmicGlow = star.name.includes('divine') || star.name.includes('sacred') || star.name.includes('supreme') ? Math.sin(time * 1.5) * 0.4 : 0; const chakraEnergy = star.name.includes('chakra') ? Math.sin(time * 2.5) * 0.3 : 0;
+                    if (mahavishnu_arms_animation_started && arm_animation_time > 5) {
+                        star.opacity = 1;
+                        star.color = '#FFD700';
+                    }
 
                     // RESPECTFUL ARM ANIMATION SEQUENCE - Stop after 5 seconds
                     let armAnimationX = 0;
@@ -270,7 +274,7 @@ document.addEventListener('DOMContentLoaded', function () { initStarfieldCanvas(
                             armAnimationX = flexEase * 24;
                         }
 
-                        // SECOND SET OF ARMS - Lower Graceful Arc Formation
+                        // SECOND SET OF ARMS (BACK ARMS) - Lower Graceful Arc Formation
                         if (star.name.includes('arm2_shoulder_left')) {
                             armAnimationY = flexEase * 4;
                             armAnimationX = -flexEase * 10;
@@ -316,11 +320,21 @@ document.addEventListener('DOMContentLoaded', function () { initStarfieldCanvas(
                             armAnimationY = flexEase * 30 + bowSteady;
                             armAnimationX = flexEase * 43;
                         }
+
+                        // ADDITIONAL WEAPONS FOR COMPLETE 4-ARM SETUP
+                        if (star.name.includes('padma_lotus')) {
+                            // Lotus blooming with divine energy
+                            const lotusBloom = Math.sin(time * 2) * 0.4;
+                            armAnimationY = -flexEase * 70 + lotusBloom;
+                            armAnimationX = -flexEase * 26;
+                        }
                     }
 
                     star.currentX = star.targetX + Math.sin(time * 0.3 + index * 0.1) * 1.2 * (star.brightness || 1) + armAnimationX;
                     star.currentY = star.targetY + Math.cos(time * 0.25 + index * 0.1) * 0.8 * (star.brightness || 1) + armAnimationY;
-                    star.opacity = star.targetOpacity * (1 + divineBreath + cosmicGlow + chakraEnergy);
+                    if (mahavishnu_arms_animation_started && arm_animation_time <= 5) {
+                        star.opacity = star.targetOpacity;
+                    }
 
                     // Subtle serpent movement ONLY after arms stop (5 seconds)
                     if (star.name.includes('serpent')) {
@@ -342,12 +356,7 @@ document.addEventListener('DOMContentLoaded', function () { initStarfieldCanvas(
                                 star.currentX += gentleMovement * 0.5;
                                 star.currentY += protectiveSway * 0.5;
                             }
-                        } else {
-                            // Before 5 seconds, serpent is still (more respectful)
-                            const breathingOnly = Math.sin(time * 0.1 + index * 0.1) * 0.3;
-                            star.currentX += breathingOnly;
-                            star.currentY += breathingOnly * 0.5;
-                        }
+                        } 
                     }
 
                     // Divine weapons showing gentle divine presence - STOP MOVEMENT AFTER 5 SECONDS
@@ -426,311 +435,123 @@ document.addEventListener('DOMContentLoaded', function () { initStarfieldCanvas(
             createMahavishnutConstellation(); constellationFormed = true
         }
     }
-    function updateShootingStars() { if (Math.random() < 0.001) { createShootingStar() } shootingStars.forEach((star, index) => { star.x += star.vx; star.y += star.vy; star.life -= 0.02; if (star.life <= 0) { shootingStars.splice(index, 1) } }) } function createShootingStar() { shootingStars.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height * 0.3, vx: Math.random() * 3 + 2, vy: Math.random() * 2 + 1, life: 1, color: '#FFD700' }) } function drawStarfield() { ctx.clearRect(0, 0, canvas.width, canvas.height); stars.forEach(star => { ctx.save(); ctx.globalAlpha = star.opacity; ctx.fillStyle = star.color; ctx.shadowColor = star.color; ctx.shadowBlur = star.size * 2; ctx.beginPath(); ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2); ctx.fill(); ctx.restore() }); drawShootingStars(); if (constellationFormed) { drawConstellation() } } function drawShootingStars() { shootingStars.forEach(star => { ctx.save(); ctx.globalAlpha = star.life; ctx.strokeStyle = star.color; ctx.lineWidth = 2; ctx.shadowColor = star.color; ctx.shadowBlur = 10; ctx.beginPath(); ctx.moveTo(star.x, star.y); ctx.lineTo(star.x - star.vx * 10, star.y - star.vy * 10); ctx.stroke(); ctx.restore() }) } function drawConstellation() {
-        ctx.save(); mahavishnutStars.forEach(star => {
+    function updateShootingStars() { if (Math.random() < 0.001) { createShootingStar() } shootingStars.forEach((star, index) => { star.x += star.vx; star.y += star.vy; star.life -= 0.02; if (star.life <= 0) { shootingStars.splice(index, 1) } }) } function createShootingStar() { shootingStars.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height * 0.3, vx: Math.random() * 3 + 2, vy: Math.random() * 2 + 1, life: 1, color: '#FFD700' }) } function drawStarfield() { ctx.clearRect(0, 0, canvas.width, canvas.height); stars.forEach(star => { ctx.save(); ctx.globalAlpha = star.opacity; ctx.fillStyle = star.color; ctx.shadowColor = star.color; ctx.shadowBlur = star.size * 2; ctx.beginPath(); ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2); ctx.fill(); ctx.restore() }); drawShootingStars(); if (constellationFormed) { drawConstellation() } } function drawShootingStars() { shootingStars.forEach(star => { ctx.save(); ctx.globalAlpha = star.life; ctx.strokeStyle = star.color; ctx.lineWidth = 2; ctx.shadowColor = star.color; ctx.shadowBlur = 10; ctx.beginPath(); ctx.moveTo(star.x, star.y); ctx.lineTo(star.x - star.vx * 10, star.y - star.vy * 10); ctx.stroke(); ctx.restore() }) }    function drawConstellation() {
+        ctx.save(); 
+        const effectsStopped = mahavishnu_arms_animation_started && arm_animation_time > 5;
+        
+        mahavishnutStars.forEach(star => {
             if (star.opacity > 0.1) {
-                const glowIntensity = star.brightness || 1; ctx.globalAlpha = star.opacity; ctx.fillStyle = star.color; ctx.shadowColor = star.color; ctx.shadowBlur = star.size * glowIntensity * 2; if (star.name.includes('sacred') || star.name.includes('divine') || star.name.includes('supreme')) { ctx.shadowBlur = star.size * glowIntensity * 4; const gradient = ctx.createRadialGradient(star.currentX, star.currentY, 0, star.currentX, star.currentY, star.size * 2); gradient.addColorStop(0, star.color); gradient.addColorStop(1, 'transparent'); ctx.fillStyle = gradient } ctx.beginPath(); ctx.arc(star.currentX, star.currentY, star.size, 0, Math.PI * 2); ctx.fill(); if (star.name.includes('eye')) { ctx.fillStyle = '#000033'; ctx.globalAlpha = star.opacity * 0.6; ctx.beginPath(); ctx.arc(star.currentX, star.currentY, star.size * 0.4, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = '#FFFFFF'; ctx.globalAlpha = star.opacity * 0.8; ctx.beginPath(); ctx.arc(star.currentX - star.size * 0.2, star.currentY - star.size * 0.2, star.size * 0.15, 0, Math.PI * 2); ctx.fill() } if (star.name === 'third_eye') { ctx.strokeStyle = '#FF6B47'; ctx.lineWidth = 2; ctx.globalAlpha = star.opacity; ctx.beginPath(); ctx.moveTo(star.currentX - star.size * 1.2, star.currentY); ctx.lineTo(star.currentX + star.size * 1.2, star.currentY); ctx.stroke(); ctx.beginPath(); ctx.moveTo(star.currentX, star.currentY - star.size * 1.2); ctx.lineTo(star.currentX, star.currentY + star.size * 1.2); ctx.stroke(); const eyeGradient = ctx.createRadialGradient(star.currentX, star.currentY, 0, star.currentX, star.currentY, star.size * 2); eyeGradient.addColorStop(0, '#FF6B47'); eyeGradient.addColorStop(1, 'transparent'); ctx.fillStyle = eyeGradient; ctx.globalAlpha = star.opacity * 0.7; ctx.beginPath();                    ctx.arc(star.currentX, star.currentY, star.size * 1.5, 0, Math.PI * 2); 
-                    ctx.fill(); 
-                } 
-                
-                if (star.name === 'sudarshan_chakra') {
-                    // Enhanced Chakra with respectful divine energy - STOPS EXCESSIVE MOVEMENT AFTER 5 SECONDS
-                    const armsStoppedPhase = mahavishnu_arms_animation_started && arm_animation_time > 5;
-                    const animationPhase = mahavishnu_arms_animation_started && arm_animation_time <= 5;
-                    
-                    ctx.strokeStyle = '#FFD700';
-                    ctx.lineWidth = armsStoppedPhase ? 6 : animationPhase ? 4 : 3;
-                    ctx.globalAlpha = star.opacity;
-                    ctx.shadowColor = '#FFD700';
-                    ctx.shadowBlur = armsStoppedPhase ? 30 : animationPhase ? 20 : 15;
-                    
-                    const spinSpeed = armsStoppedPhase ? time * 1.5 : animationPhase ? time * 3 : time * 2;
-                    const energyPulse = armsStoppedPhase ? 1 + Math.sin((arm_animation_time - 5) * 4) * 0.8 : 
-                                       animationPhase ? 1 + Math.sin(arm_animation_time * 4) * 0.4 : 
-                                       1 + Math.sin(time * 2) * 0.3;
-                    
-                    // Main chakra disc with respectful power scaling
+                if (effectsStopped) {
+                    ctx.globalAlpha = 1.0;
+                    ctx.fillStyle = '#FFFF00';
+                    ctx.shadowColor = 'transparent';
+                    ctx.shadowBlur = 0;
                     ctx.beginPath();
-                    ctx.arc(star.currentX, star.currentY, star.size * 1.5 * energyPulse, 0, Math.PI * 2);
-                    ctx.stroke();
-                    
-                    // Respectful energy rays - more after arms stop
-                    const rayCount = armsStoppedPhase ? 24 : animationPhase ? 12 : 8;
-                    for (let i = 0; i < rayCount; i++) {
-                        const angle = i * Math.PI * 2 / rayCount + spinSpeed;
-                        const rayLength = star.size * (armsStoppedPhase ? 4 : 2.5) * energyPulse;
-                        ctx.lineWidth = armsStoppedPhase ? 3 : 2;
+                    ctx.arc(star.currentX, star.currentY, star.size, 0, Math.PI * 2);
+                    ctx.fill();
+                } else {
+                    const glowIntensity = star.brightness || 1; 
+                    ctx.globalAlpha = star.opacity; 
+                    ctx.fillStyle = star.color; 
+                    ctx.shadowColor = star.color; 
+                    ctx.shadowBlur = star.size * glowIntensity * 2; 
+                    if (star.name.includes('sacred') || star.name.includes('divine') || star.name.includes('supreme')) { 
+                        ctx.shadowBlur = star.size * glowIntensity * 4; 
+                        const gradient = ctx.createRadialGradient(star.currentX, star.currentY, 0, star.currentX, star.currentY, star.size * 2); 
+                        gradient.addColorStop(0, star.color); 
+                        gradient.addColorStop(1, 'transparent'); 
+                        ctx.fillStyle = gradient 
+                    } 
+                    ctx.beginPath(); 
+                    ctx.arc(star.currentX, star.currentY, star.size, 0, Math.PI * 2); 
+                    ctx.fill();
+                }                }
+                
+                if (!effectsStopped) {
+                    if (star.name.includes('eye')) { 
+                        ctx.fillStyle = '#000033'; 
+                        ctx.globalAlpha = star.opacity * 0.6; 
+                        ctx.beginPath(); 
+                        ctx.arc(star.currentX, star.currentY, star.size * 0.4, 0, Math.PI * 2); 
+                        ctx.fill(); 
+                        ctx.fillStyle = '#FFFFFF'; 
+                        ctx.globalAlpha = star.opacity * 0.8; 
+                        ctx.beginPath(); 
+                        ctx.arc(star.currentX - star.size * 0.2, star.currentY - star.size * 0.2, star.size * 0.15, 0, Math.PI * 2); 
+                        ctx.fill() 
+                    } 
+                    if (star.name === 'third_eye') { 
+                        ctx.strokeStyle = '#FF6B47'; 
+                        ctx.lineWidth = 2; 
+                        ctx.globalAlpha = star.opacity; 
+                        ctx.beginPath(); 
+                        ctx.moveTo(star.currentX - star.size * 1.2, star.currentY); 
+                        ctx.lineTo(star.currentX + star.size * 1.2, star.currentY); 
+                        ctx.stroke(); 
+                        ctx.beginPath(); 
+                        ctx.moveTo(star.currentX, star.currentY - star.size * 1.2); 
+                        ctx.lineTo(star.currentX, star.currentY + star.size * 1.2); 
+                        ctx.stroke(); 
+                        const eyeGradient = ctx.createRadialGradient(star.currentX, star.currentY, 0, star.currentX, star.currentY, star.size * 2); 
+                        eyeGradient.addColorStop(0, '#FF6B47'); 
+                        eyeGradient.addColorStop(1, 'transparent'); 
+                        ctx.fillStyle = eyeGradient; 
+                        ctx.globalAlpha = star.opacity * 0.7; 
                         ctx.beginPath();
-                        ctx.moveTo(star.currentX, star.currentY);
-                        ctx.lineTo(star.currentX + Math.cos(angle) * rayLength, 
-                                  star.currentY + Math.sin(angle) * rayLength);
-                        ctx.stroke();
+                        ctx.arc(star.currentX, star.currentY, star.size * 1.5, 0, Math.PI * 2); 
+                        ctx.fill(); 
                     }
                     
-                    // Power core with divine energy pulses
-                    ctx.fillStyle = armsStoppedPhase ? '#FFFFFF' : '#FFD700';
-                    ctx.globalAlpha = star.opacity * energyPulse;
-                    ctx.beginPath();
-                    ctx.arc(star.currentX, star.currentY, star.size * 0.8 * energyPulse, 0, Math.PI * 2);
-                    ctx.fill();
-                    
-                    // Divine energy rings when arms have stopped (divine light phase)
-                    if (armsStoppedPhase) {
-                        for (let ring = 1; ring <= 3; ring++) {
-                            ctx.strokeStyle = `rgba(255, 255, 255, ${0.9 / ring})`;
-                            ctx.lineWidth = 7 - ring;
+                    if (star.name === 'sudarshan_chakra') {
+                        const armsStoppedPhase = mahavishnu_arms_animation_started && arm_animation_time > 5;
+                        const animationPhase = mahavishnu_arms_animation_started && arm_animation_time <= 5;
+                        
+                        ctx.strokeStyle = '#FFD700';
+                        ctx.lineWidth = armsStoppedPhase ? 6 : animationPhase ? 4 : 3;
+                        ctx.globalAlpha = star.opacity;
+                        ctx.shadowColor = '#FFD700';
+                        ctx.shadowBlur = armsStoppedPhase ? 30 : animationPhase ? 20 : 15;
+                        
+                        const spinSpeed = armsStoppedPhase ? time * 1.5 : animationPhase ? time * 3 : time * 2;
+                        const energyPulse = armsStoppedPhase ? 1 + Math.sin((arm_animation_time - 5) * 4) * 0.8 : 
+                                           animationPhase ? 1 + Math.sin(arm_animation_time * 4) * 0.4 : 
+                                           1 + Math.sin(time * 2) * 0.3;
+                        
+                        ctx.beginPath();
+                        ctx.arc(star.currentX, star.currentY, star.size * 1.5 * energyPulse, 0, Math.PI * 2);
+                        ctx.stroke();
+                        
+                        const rayCount = armsStoppedPhase ? 24 : animationPhase ? 12 : 8;
+                        for (let i = 0; i < rayCount; i++) {
+                            const angle = i * Math.PI * 2 / rayCount + spinSpeed;
+                            const rayLength = star.size * (armsStoppedPhase ? 4 : 2.5) * energyPulse;
+                            ctx.lineWidth = armsStoppedPhase ? 3 : 2;
                             ctx.beginPath();
+                            ctx.moveTo(star.currentX, star.currentY);
+                            ctx.lineTo(star.currentX + Math.cos(angle) * rayLength, 
+                                      star.currentY + Math.sin(angle) * rayLength);
+                            ctx.stroke();
+                        }
+                        
+                        ctx.fillStyle = armsStoppedPhase ? '#FFFFFF' : '#FFD700';
+                        ctx.globalAlpha = star.opacity * energyPulse;
+                        ctx.beginPath();
+                        ctx.arc(star.currentX, star.currentY, star.size * 0.8 * energyPulse, 0, Math.PI * 2);
+                        ctx.fill();
+                        
+                        if (armsStoppedPhase) {
+                            for (let ring = 1; ring <= 3; ring++) {
+                                ctx.strokeStyle = `rgba(255, 255, 255, ${0.9 / ring})`;
+                                ctx.lineWidth = 7 - ring;
+                                ctx.beginPath();
                             ctx.arc(star.currentX, star.currentY, 
                                    star.size * (2.5 + ring) * energyPulse, 0, Math.PI * 2);
                             ctx.stroke();
                         }
                     }
-                }                if (star.name === 'padma_lotus') {
-                    // Enhanced Lotus with divine blooming phases
-                    const powerPhase = mahavishnu_arms_animation_started && arm_animation_time >= 9;
-                    const holdPhase = mahavishnu_arms_animation_started && arm_animation_time > 4 && arm_animation_time < 9;
-                    
-                    const petalCount = powerPhase ? 12 : 8;
-                    const bloomSize = powerPhase ? 1.8 : holdPhase ? 1.4 : 1.3;
-                    const petalGlow = powerPhase ? 1 + Math.sin(arm_animation_time * 8) * 0.5 : 1;
-                    
-                    for (let i = 0; i < petalCount; i++) {
-                        const angle = (i / petalCount) * Math.PI * 2;
-                        const petalX = star.currentX + Math.cos(angle) * star.size * bloomSize;
-                        const petalY = star.currentY + Math.sin(angle) * star.size * bloomSize;
-                        
-                        ctx.fillStyle = powerPhase ? '#FFFF99' : '#FFB6C1';
-                        ctx.globalAlpha = star.opacity * 0.7 * petalGlow;
-                        ctx.shadowColor = powerPhase ? '#FFFF99' : '#FFB6C1';
-                        ctx.shadowBlur = powerPhase ? 15 : 8;
-                        
-                        ctx.beginPath();
-                        ctx.ellipse(petalX, petalY, star.size * 0.6 * petalGlow, 
-                                   star.size * 0.3 * petalGlow, angle, 0, Math.PI * 2);
-                        ctx.fill();
-                    }
-                    
-                    // Divine center with energy pulses
-                    if (powerPhase) {
-                        const centerPulse = 1 + Math.sin(arm_animation_time * 12) * 0.4;
-                        ctx.fillStyle = '#FFFFFF';
-                        ctx.globalAlpha = star.opacity * centerPulse;
-                        ctx.shadowColor = '#FFFFFF';
-                        ctx.shadowBlur = 20;
-                        ctx.beginPath();
-                        ctx.arc(star.currentX, star.currentY, star.size * 0.5 * centerPulse, 0, Math.PI * 2);
-                        ctx.fill();
-                    }
-                }if (star.name.includes('serpent_hood_')) {
-                    // Enhanced cobra hood with divine patterns
-                    ctx.globalAlpha = star.opacity;
-                    ctx.fillStyle = star.color;
-                    ctx.shadowColor = star.color;
-                    ctx.shadowBlur = star.size * 6;
-
-                    // Main hood shape (expanded cobra hood)
-                    ctx.beginPath();
-                    ctx.ellipse(star.currentX, star.currentY, star.size * 2.5, star.size * 1.8, 0, 0, Math.PI * 2);
-                    ctx.fill();
-
-                    // Hood membrane (semi-transparent)
-                    ctx.fillStyle = star.color;
-                    ctx.globalAlpha = star.opacity * 0.6;
-                    ctx.beginPath();
-                    ctx.ellipse(star.currentX, star.currentY, star.size * 2.2, star.size * 1.5, 0, 0, Math.PI * 2);
-                    ctx.fill();
-
-                    // Hood patterns (sacred markings)
-                    ctx.strokeStyle = '#FFD700';
-                    ctx.lineWidth = 2;
-                    ctx.globalAlpha = star.opacity * 0.8;
-
-                    // Central divine pattern (Om symbol representation)
-                    ctx.beginPath();
-                    ctx.arc(star.currentX, star.currentY, star.size * 0.8, 0, Math.PI * 2);
-                    ctx.stroke();
-
-                    ctx.beginPath();
-                    ctx.arc(star.currentX, star.currentY - star.size * 0.5, star.size * 0.4, 0, Math.PI * 2);
-                    ctx.stroke();
-
-                    // Radiating lines from center
-                    for (let i = 0; i < 8; i++) {
-                        const angle = (i / 8) * Math.PI * 2;
-                        ctx.beginPath();
-                        ctx.moveTo(star.currentX, star.currentY);
-                        ctx.lineTo(star.currentX + Math.cos(angle) * star.size * 1.5, star.currentY + Math.sin(angle) * star.size * 1.2);
-                        ctx.stroke();
-                    }
-
-                    // Hood edge membrane
-                    ctx.strokeStyle = star.color;
-                    ctx.lineWidth = 3;
-                    ctx.globalAlpha = star.opacity;
-                    ctx.beginPath();
-                    ctx.arc(star.currentX, star.currentY, star.size * 2.3, 0, Math.PI);
-                    ctx.stroke();
-
-                    // Divine energy pulse from hood
-                    const hoodPulse = Math.sin(time * 2.5) * 0.5 + 1;
-                    ctx.fillStyle = star.color;
-                    ctx.globalAlpha = star.opacity * 0.3 * hoodPulse;
-                    ctx.beginPath();
-                    ctx.arc(star.currentX, star.currentY, star.size * 3 * hoodPulse, 0, Math.PI * 2);
-                    ctx.fill();
                 }
-
-                // Serpent constellation as simple star points
-                if (star.name.includes('serpent_head_') || star.name.includes('serpent_neck_') || 
-                    star.name.includes('serpent_body_') || star.name.includes('serpent_coil_') || 
-                    star.name.includes('serpent_tail_')) {
-                    ctx.globalAlpha = star.opacity;
-                    ctx.fillStyle = star.color;
-                    ctx.shadowBlur = star.size * 2; // Slight glow for visibility
-                    ctx.shadowColor = star.color;
-                    
-                    // Simple star point - circle with slight pulsing for serpent body
-                    const serpentPulse = star.name.includes('serpent_body_') ? 
-                        1 + Math.sin(time * 2 + star.currentX * 0.01) * 0.1 : 1;
-                    
-                    ctx.beginPath();
-                    ctx.arc(star.currentX, star.currentY, star.size * serpentPulse, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-
-
-                if (star.name.includes('serpent_eye_')) {
-                    ctx.globalAlpha = star.opacity;
-                    ctx.fillStyle = star.color;
-                    ctx.shadowColor = star.color;
-                    ctx.shadowBlur = star.size * 6;
-
-                    // Enhanced serpent eye with divine glow
-                    ctx.beginPath();
-                    ctx.ellipse(star.currentX, star.currentY, star.size * 1.4, star.size * 1.0, 0, 0, Math.PI * 2);
-                    ctx.fill();
-
-                    // Pupil (slit-shaped for serpent)
-                    ctx.fillStyle = '#000000';
-                    ctx.globalAlpha = star.opacity * 0.9;
-                    ctx.beginPath();
-                    ctx.ellipse(star.currentX, star.currentY, star.size * 0.3, star.size * 0.8, 0, 0, Math.PI * 2);
-                    ctx.fill();
-
-                    // Iris glow
-                    const irisPulse = 1 + Math.sin(time * 4) * 0.3;
-                    ctx.fillStyle = '#FFFF00';
-                    ctx.globalAlpha = star.opacity * irisPulse * 0.7;
-                    ctx.beginPath();
-                    ctx.ellipse(star.currentX, star.currentY, star.size * 0.6, star.size * 0.9, 0, 0, Math.PI * 2);
-                    ctx.fill();
-
-                    // Divine light reflection
-                    ctx.fillStyle = '#FFFFFF';
-                    ctx.globalAlpha = star.opacity;
-                    ctx.beginPath();
-                    ctx.arc(star.currentX - star.size * 0.3, star.currentY - star.size * 0.2, star.size * 0.2, 0, Math.PI * 2);
-                    ctx.fill();
-
-                    // Mystic energy emanating from eyes
-                    const eyeGlow = ctx.createRadialGradient(star.currentX, star.currentY, 0, star.currentX, star.currentY, star.size * 3);
-                    eyeGlow.addColorStop(0, star.color);
-                    eyeGlow.addColorStop(1, 'transparent');
-                    ctx.fillStyle = eyeGlow;
-                    ctx.globalAlpha = star.opacity * 0.4;
-                    ctx.beginPath();
-                    ctx.arc(star.currentX, star.currentY, star.size * 3, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-
-                // Removed bright solar effects for performance            // Removed nostril breathing effects for performance            // Removed star twinkling effects for performance            // Enhanced serpent body coils and segments
-                if (star.name.includes('serpent_body_') || star.name.includes('shesha_coil_')) {
-                    ctx.globalAlpha = star.opacity;
-                    ctx.fillStyle = star.color;
-                    ctx.shadowColor = star.color;
-                    ctx.shadowBlur = star.size * 5;
-
-                    // Main body segment
-                    const bodyPulse = 1 + Math.sin(time * 0.8 + star.currentX * 0.01) * 0.2;
-                    ctx.beginPath();
-                    ctx.ellipse(star.currentX, star.currentY, star.size * 2 * bodyPulse, star.size * 1.5 * bodyPulse, 0, 0, Math.PI * 2);
-                    ctx.fill();
-
-                    // Body scale texture
-                    ctx.strokeStyle = star.color;
-                    ctx.lineWidth = 1.5;
-                    ctx.globalAlpha = star.opacity * 0.6;
-                    for (let i = 0; i < 6; i++) {
-                        const angle = (i / 6) * Math.PI * 2;
-                        const scaleX = star.currentX + Math.cos(angle) * star.size * 1.2;
-                        const scaleY = star.currentY + Math.sin(angle) * star.size * 0.8;
-                        ctx.beginPath();
-                        ctx.ellipse(scaleX, scaleY, star.size * 0.3, star.size * 0.2, angle, 0, Math.PI * 2);
-                        ctx.stroke();
-                    }
-
-                    // Muscular definition
-                    ctx.strokeStyle = 'rgba(0,0,0,0.3)';
-                    ctx.lineWidth = 2;
-                    ctx.globalAlpha = star.opacity * 0.4;
-                    ctx.beginPath();
-                    ctx.ellipse(star.currentX, star.currentY, star.size * 1.6, star.size * 1.2, 0, 0, Math.PI * 2);
-                    ctx.stroke();
-
-                    // Divine energy emanating from serpent body
-                    const energyGlow = Math.sin(time * 2) * 0.3 + 0.7;
-                    ctx.fillStyle = star.color;
-                    ctx.globalAlpha = star.opacity * energyGlow * 0.3;
-                    ctx.beginPath();
-                    ctx.arc(star.currentX, star.currentY, star.size * 3, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-
-                // Enhanced divine crown
-                if (star.name.includes('crown')) {
-                    const spikes = 8;
-                    for (let i = 0; i < spikes; i++) {
-                        const angle = (i / spikes) * Math.PI * 2 - Math.PI / 2;
-                        const spikeX = star.currentX + Math.cos(angle) * star.size * 1.5;
-                        const spikeY = star.currentY + Math.sin(angle) * star.size * 1.5;
-                        ctx.fillStyle = star.color;
-                        ctx.globalAlpha = star.opacity * 0.9;
-                        ctx.beginPath();
-                        ctx.moveTo(star.currentX, star.currentY);
-                        ctx.lineTo(spikeX, spikeY);
-                        ctx.lineTo(star.currentX + Math.cos(angle + 0.2) * star.size * 1.0, star.currentY + Math.sin(angle + 0.2) * star.size * 1.0);
-                        ctx.closePath();
-                        ctx.fill();
-
-                        // Crown jewels
-                        ctx.fillStyle = '#FF1493';
-                        ctx.globalAlpha = star.opacity;
-                        ctx.beginPath();
-                        ctx.arc(spikeX * 0.7 + star.currentX * 0.3, spikeY * 0.7 + star.currentY * 0.3, star.size * 0.2, 0, Math.PI * 2);
-                        ctx.fill();
-                    }
-                }
-
-                // Enhanced divine aura and cosmic energy with DIVINE LIGHT after 5 seconds
-                if (star.name.includes('divine_aura') || star.name.includes('cosmic_ray') || star.name.includes('supreme')) {
-                    const armsStoppedPhase = mahavishnu_arms_animation_started && arm_animation_time > 5;
-                    const animationPhase = mahavishnu_arms_animation_started && arm_animation_time <= 5;
-                    
-                    const auraPulse = armsStoppedPhase ? 1 + Math.sin((arm_animation_time - 5) * 3) * 1.2 : animationPhase ? 1 + Math.sin(arm_animation_time * 2) * 0.6 : 1 + Math.sin(time * 1) * 0.4;
-                    const baseRadius = armsStoppedPhase ? star.size * 18 : animationPhase ? star.size * 8 : star.size * 5;
-                    const auraRadius = Math.max(1, baseRadius * Math.max(0.1, auraPulse));
-                    const auraGlow = ctx.createRadialGradient(star.currentX, star.currentY, 0, star.currentX, star.currentY, auraRadius);
-                    auraGlow.addColorStop(0, star.color);
-                    auraGlow.addColorStop(0.2, armsStoppedPhase ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.5)');
-                    auraGlow.addColorStop(0.5, armsStoppedPhase ? 'rgba(255,215,0,0.6)' : 'rgba(255,255,255,0.3)');
-                    auraGlow.addColorStop(1, 'transparent');
-                    ctx.fillStyle = auraGlow;
-                    ctx.globalAlpha = star.opacity * auraPulse * (armsStoppedPhase ? 1.2 : 0.7);
-                    ctx.beginPath();
-                    ctx.arc(star.currentX, star.currentY, auraRadius, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-            }});
+            }
+        });
         drawConstellationLines();
         
         ctx.restore();
