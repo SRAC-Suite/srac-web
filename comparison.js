@@ -27,22 +27,26 @@ document.addEventListener('DOMContentLoaded', function () { initStarfieldCanvas(
         
         // Recreate constellation with mobile scaling
         if (constellationFormed) {
-            createMahavishnutConstellation();
+            createMahavishnuConstellation();
         }
-    } function createStarField() { stars.length = 0; for (let i = 0; i < 200; i++) { stars.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, size: Math.random() * 2 + 0.5, opacity: Math.random() * 0.8 + 0.2, twinkleSpeed: Math.random() * 0.02 + 0.005, color: `hsl(${Math.random() > 0.8 ? 45 : 60},${Math.random() * 30 + 70}%,${Math.random() * 30 + 70}%)`, velocity: { x: (Math.random() - 0.5) * 0.2, y: (Math.random() - 0.5) * 0.2 } }) } }    function createMahavishnutConstellation() {
+    } function createStarField() { stars.length = 0; for (let i = 0; i < 200; i++) { stars.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, size: Math.random() * 2 + 0.5, opacity: Math.random() * 0.8 + 0.2, twinkleSpeed: Math.random() * 0.02 + 0.005, color: `hsl(${Math.random() > 0.8 ? 45 : 60},${Math.random() * 30 + 70}%,${Math.random() * 30 + 70}%)`, velocity: { x: (Math.random() - 0.5) * 0.2, y: (Math.random() - 0.5) * 0.2 } }) } }
+    function createMahavishnuConstellation() {
         const centerX = canvas.width / 2; 
         const centerY = canvas.height / 2; 
         mahavishnutStars.length = 0; 
         
-        // Mobile responsive scaling
+        // Enhanced mobile responsive scaling with better positioning
         const isMobile = window.innerWidth <= 768;
         const isSmallMobile = window.innerWidth <= 480;
         let scale = 0.6;
+        let offsetY = 0; // Add vertical offset for mobile
         
         if (isSmallMobile) {
-            scale = 0.4; // Smaller on small mobile
+            scale = 0.25; // Much smaller for small mobile
+            offsetY = -50; // Move up to center better
         } else if (isMobile) {
-            scale = 0.5; // Medium on tablets
+            scale = 0.35; // Smaller for tablets
+            offsetY = -30; // Slight upward adjustment
         }
         
         constellationPoints = [
@@ -90,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function () { initStarfieldCanvas(
             { x: 45, y: -15, size: 2.5, name: 'arm2_upper_right', color: '#FFD700', brightness: 0.8 },
             { x: 50, y: 5, size: 2.5, name: 'arm2_forearm_right', color: '#FFD700', brightness: 0.8 },
             { x: 45, y: 25, size: 3, name: 'hand2_right', color: '#FFD700', brightness: 0.8 },
-            { x: 55, y: 30, size: 3.5, name: 'divine_bow', color: '#654321', brightness: 1.3 },
+            { x: 55, y: 30, size: 3.5, name: 'divine_khadga', color: '#C0C0C0', brightness: 1.3 }, // Divine Sword
             { x: -73, y: 47, size: 3.5, name: 'padma_lotus', color: '#FFB6C1', brightness: 1.4 },
 
             // Divine Body
@@ -182,9 +186,30 @@ document.addEventListener('DOMContentLoaded', function () { initStarfieldCanvas(
             { x: 220, y: 50, size: 3, name: 'divine_aura_mr', color: '#E6E6FA', brightness: 0.6 },
             { x: -180, y: 200, size: 3, name: 'divine_aura_bl', color: '#E6E6FA', brightness: 0.6 },
             { x: 180, y: 200, size: 3, name: 'divine_aura_br', color: '#E6E6FA', brightness: 0.6 }
-        ]; constellationPoints.forEach(point => { mahavishnutStars.push({ x: centerX + point.x * scale, y: centerY + point.y * scale, targetX: centerX + point.x * scale, targetY: centerY + point.y * scale, currentX: Math.random() * canvas.width, currentY: Math.random() * canvas.height, size: point.size, opacity: 0, targetOpacity: (point.brightness || 1) * 0.9, color: point.color || '#FFD700', name: point.name, formationProgress: 0, brightness: point.brightness || 1, connectionLines: [] }) })
-    } function updateStarfield() {
-        time += 0.016; if (!constellationFormed && time > 2) { formConstellation() }
+        ]; 
+        
+        constellationPoints.forEach(point => { 
+            mahavishnutStars.push({ 
+                x: centerX + (point.x * scale), 
+                y: centerY + (point.y * scale) + offsetY, // Add mobile offset
+                targetX: centerX + (point.x * scale), 
+                targetY: centerY + (point.y * scale) + offsetY, // Add mobile offset
+                currentX: Math.random() * canvas.width, 
+                currentY: Math.random() * canvas.height, 
+                size: Math.max(1, point.size * (isMobile ? 0.8 : 1)), // Scale star sizes
+                opacity: 0, 
+                targetOpacity: (point.brightness || 1) * 0.9, 
+                color: point.color || '#FFD700', 
+                name: point.name, 
+                formationProgress: 0, 
+                brightness: point.brightness || 1, 
+                connectionLines: [] 
+            }) 
+        })
+    } 
+    function updateStarfield() {
+        time += 0.016; 
+        if (!constellationFormed && time > 2) { formConstellation() }
 
         // Start Mahavishnu's divine arm-raising animation after constellation fully forms
         if (!mahavishnu_arms_animation_started && time > 10) { // Wait longer for complete constellation
@@ -196,9 +221,28 @@ document.addEventListener('DOMContentLoaded', function () { initStarfieldCanvas(
             arm_animation_time += 0.015; // Slower for more dramatic effect
         }
 
-        stars.forEach(star => { star.x += star.velocity.x; star.y += star.velocity.y; if (star.x < 0) star.x = canvas.width; if (star.x > canvas.width) star.x = 0; if (star.y < 0) star.y = canvas.height; if (star.y > canvas.height) star.y = 0; star.opacity = 0.5 + Math.sin(time * star.twinkleSpeed) * 0.3 }); if (constellationFormed) {
+        stars.forEach(star => { 
+            star.x += star.velocity.x; 
+            star.y += star.velocity.y; 
+            if (star.x < 0) star.x = canvas.width; 
+            if (star.x > canvas.width) star.x = 0; 
+            if (star.y < 0) star.y = canvas.height; 
+            if (star.y > canvas.height) star.y = 0; 
+            star.opacity = 0.5 + Math.sin(time * star.twinkleSpeed) * 0.3 
+        }); 
+        
+        if (constellationFormed) {
             mahavishnutStars.forEach((star, index) => {
-                const formationDelay = getDivineFormationDelay(star.name); const adjustedProgress = Math.max(0, (time - 2 - formationDelay) / 4); if (star.formationProgress < 1) { star.formationProgress = Math.min(1, adjustedProgress); const progress = easeInOutCubic(star.formationProgress); star.currentX = star.currentX + (star.targetX - star.currentX) * progress * 0.12; star.currentY = star.currentY + (star.targetY - star.currentY) * progress * 0.12; star.opacity = star.targetOpacity * progress } else {
+                const formationDelay = getDivineFormationDelay(star.name); 
+                const adjustedProgress = Math.max(0, (time - 2 - formationDelay) / 4); 
+                
+                if (star.formationProgress < 1) { 
+                    star.formationProgress = Math.min(1, adjustedProgress); 
+                    const progress = easeInOutCubic(star.formationProgress); 
+                    star.currentX = star.currentX + (star.targetX - star.currentX) * progress * 0.12; 
+                    star.currentY = star.currentY + (star.targetY - star.currentY) * progress * 0.12; 
+                    star.opacity = star.targetOpacity * progress 
+                } else {
                     if (mahavishnu_arms_animation_started && arm_animation_time > 5) {
                         star.opacity = 1;
                         star.color = '#FFD700';
@@ -314,10 +358,10 @@ document.addEventListener('DOMContentLoaded', function () { initStarfieldCanvas(
                             armAnimationY = flexEase * 25;
                             armAnimationX = flexEase * 40;
                         }
-                        if (star.name.includes('divine_bow')) {
-                            // Bow held steadily with archer's precision
-                            const bowSteady = Math.sin(time * 1) * 0.2;
-                            armAnimationY = flexEase * 30 + bowSteady;
+                        if (star.name.includes('divine_khadga')) {
+                            // Divine sword held with warrior's precision
+                            const swordGleam = Math.sin(time * 2) * 0.4;
+                            armAnimationY = flexEase * 30 + swordGleam;
                             armAnimationX = flexEase * 43;
                         }
 
@@ -330,8 +374,20 @@ document.addEventListener('DOMContentLoaded', function () { initStarfieldCanvas(
                         }
                     }
 
-                    star.currentX = star.targetX + Math.sin(time * 0.3 + index * 0.1) * 1.2 * (star.brightness || 1) + armAnimationX;
-                    star.currentY = star.targetY + Math.cos(time * 0.25 + index * 0.1) * 0.8 * (star.brightness || 1) + armAnimationY;
+                    // Update the base star movement calculation with mobile scaling
+                    const isMobile = window.innerWidth <= 768;
+                    const isSmallMobile = window.innerWidth <= 480;
+                    let movementScale = 1;
+
+                    if (isSmallMobile) {
+                        movementScale = 0.4; // Much smaller base movements
+                    } else if (isMobile) {
+                        movementScale = 0.6; // Smaller base movements
+                    }
+
+                    star.currentX = star.targetX + Math.sin(time * 0.3 + index * 0.1) * 1.2 * (star.brightness || 1) * movementScale + armAnimationX;
+                    star.currentY = star.targetY + Math.cos(time * 0.25 + index * 0.1) * 0.8 * (star.brightness || 1) * movementScale + armAnimationY;
+                    
                     if (mahavishnu_arms_animation_started && arm_animation_time <= 5) {
                         star.opacity = star.targetOpacity;
                     }
@@ -341,58 +397,88 @@ document.addEventListener('DOMContentLoaded', function () { initStarfieldCanvas(
                         const serpentActivePhase = mahavishnu_arms_animation_started && arm_animation_time > 5;
                         
                         if (serpentActivePhase) {
-                            // Very subtle movement for protective serpent
-                            const gentleMovement = Math.sin(time * 0.2 + index * 0.3) * 0.8;
-                            const protectiveSway = Math.cos(time * 0.15 + index * 0.2) * 0.6;
+                            const isMobile = window.innerWidth <= 768;
+                            const isSmallMobile = window.innerWidth <= 480;
+                            let serpentScale = 1;
                             
-                            // Enhanced serpent head movement during protective phase - SUBTLE
+                            if (isSmallMobile) {
+                                serpentScale = 0.3;
+                            } else if (isMobile) {
+                                serpentScale = 0.5;
+                            }
+                            
+                            const gentleMovement = Math.sin(time * 0.2 + index * 0.3) * 0.8 * serpentScale;
+                            const protectiveSway = Math.cos(time * 0.15 + index * 0.2) * 0.6 * serpentScale;
+                            
                             if (star.name.includes('serpent_head_')) {
-                                const protectiveWatch = Math.sin((arm_animation_time - 5) * 0.8) * 1.2; // Gentle head movement
-                                const guardianPosition = Math.cos((arm_animation_time - 5) * 0.6) * 0.9; // Protective positioning
+                                const protectiveWatch = Math.sin((arm_animation_time - 5) * 0.8) * 1.2 * serpentScale;
+                                const guardianPosition = Math.cos((arm_animation_time - 5) * 0.6) * 0.9 * serpentScale;
                                 star.currentX += gentleMovement + protectiveWatch;
                                 star.currentY += protectiveSway + guardianPosition;
                             } else {
-                                // Body moves very subtly
                                 star.currentX += gentleMovement * 0.5;
                                 star.currentY += protectiveSway * 0.5;
                             }
                         } 
                     }
 
-                    // Divine weapons showing gentle divine presence - STOP MOVEMENT AFTER 5 SECONDS
+                    // Enhanced weapon animations
                     if (star.name.includes('sudarshan')) {
                         const weaponActivePhase = mahavishnu_arms_animation_started && arm_animation_time <= 5;
-                        const spinSpeed = weaponActivePhase ? time * 2 : time * 1; // Slower, more respectful spinning
-                        const energyRadius = weaponActivePhase ? 0.8 + Math.sin(time * 2) * 0.3 : 0.4;
+                        const spinSpeed = weaponActivePhase ? time * 2 : time * 1;
+                        
+                        const isMobile = window.innerWidth <= 768;
+                        const weaponScale = isMobile ? 0.5 : 1;
+                        
+                        const energyRadius = (weaponActivePhase ? 0.8 + Math.sin(time * 2) * 0.3 : 0.4) * weaponScale;
                         star.currentX += Math.cos(spinSpeed) * energyRadius;
                         star.currentY += Math.sin(spinSpeed) * energyRadius;
                     }
 
                     if (star.name.includes('padma')) {
                         const weaponActivePhase = mahavishnu_arms_animation_started && arm_animation_time <= 5;
-                        const blooming = weaponActivePhase ? Math.sin(time * 1.5) * 0.8 : Math.sin(time * 0.8) * 0.3;
-                        const petals = weaponActivePhase ? Math.cos(time * 1.2) * 0.6 : Math.cos(time * 0.6) * 0.2;
+                        
+                        const isMobile = window.innerWidth <= 768;
+                        const weaponScale = isMobile ? 0.5 : 1;
+                        
+                        const blooming = (weaponActivePhase ? Math.sin(time * 1.5) * 0.8 : Math.sin(time * 0.8) * 0.3) * weaponScale;
+                        const petals = (weaponActivePhase ? Math.cos(time * 1.2) * 0.6 : Math.cos(time * 0.6) * 0.2) * weaponScale;
                         star.currentX += blooming * 0.4;
                         star.currentY += petals;
                     }
 
-                    if (star.name.includes('divine_gada') || star.name.includes('divine_bow')) {
+                    if (star.name.includes('divine_gada')) {
                         const weaponActivePhase = mahavishnu_arms_animation_started && arm_animation_time <= 5;
-                        // Divine weapons show weight and divine energy - RESPECTFUL HANDLING
-                        const weaponMovement = weaponActivePhase ? Math.sin(time * 1.5) * 0.6 : Math.sin(time * 0.8) * 0.3;
-                        star.currentY += weaponMovement;
                         
-                        // Bow string effect for divine bow - GENTLE
-                        if (star.name.includes('divine_bow') && weaponActivePhase) {
-                            const bowString = Math.cos(time * 2) * 0.4;
-                            star.currentX += bowString;
-                        }
+                        const isMobile = window.innerWidth <= 768;
+                        const weaponScale = isMobile ? 0.5 : 1;
+                        
+                        const weaponMovement = (weaponActivePhase ? Math.sin(time * 1.5) * 0.6 : Math.sin(time * 0.8) * 0.3) * weaponScale;
+                        const divineWeight = (weaponActivePhase ? Math.cos(time * 1.2) * 0.4 : Math.cos(time * 0.7) * 0.2) * weaponScale;
+                        star.currentY += weaponMovement;
+                        star.currentX += divineWeight * 0.3;
+                    }
+
+                    if (star.name.includes('divine_khadga')) {
+                        const weaponActivePhase = mahavishnu_arms_animation_started && arm_animation_time <= 5;
+                        
+                        const isMobile = window.innerWidth <= 768;
+                        const weaponScale = isMobile ? 0.5 : 1;
+                        
+                        // Sword gleaming and precise movement
+                        const swordGleam = (weaponActivePhase ? Math.sin(time * 3) * 0.5 : Math.sin(time * 1.5) * 0.2) * weaponScale;
+                        const warriorPrecision = (weaponActivePhase ? Math.cos(time * 2.5) * 0.3 : Math.cos(time * 1) * 0.15) * weaponScale;
+                        star.currentY += swordGleam;
+                        star.currentX += warriorPrecision;
                     }
 
                     if (star.name.includes('conch_shell')) {
                         const weaponActivePhase = mahavishnu_arms_animation_started && arm_animation_time <= 5;
-                        // Conch vibrates with divine sound waves - GENTLE
-                        const soundVibration = weaponActivePhase ? Math.sin(time * 4) * 0.4 : Math.sin(time * 2) * 0.2;
+                        
+                        const isMobile = window.innerWidth <= 768;
+                        const weaponScale = isMobile ? 0.5 : 1;
+                        
+                        const soundVibration = (weaponActivePhase ? Math.sin(time * 4) * 0.4 : Math.sin(time * 2) * 0.2) * weaponScale;
                         star.currentX += soundVibration;
                     }
                 }
@@ -432,7 +518,7 @@ document.addEventListener('DOMContentLoaded', function () { initStarfieldCanvas(
     }
     function formConstellation() {
         if (!constellationFormed) {
-            createMahavishnutConstellation(); constellationFormed = true
+            createMahavishnuConstellation(); constellationFormed = true
         }
     }
     function updateShootingStars() { if (Math.random() < 0.001) { createShootingStar() } shootingStars.forEach((star, index) => { star.x += star.vx; star.y += star.vy; star.life -= 0.02; if (star.life <= 0) { shootingStars.splice(index, 1) } }) } function createShootingStar() { shootingStars.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height * 0.3, vx: Math.random() * 3 + 2, vy: Math.random() * 2 + 1, life: 1, color: '#FFD700' }) } function drawStarfield() { ctx.clearRect(0, 0, canvas.width, canvas.height); stars.forEach(star => { ctx.save(); ctx.globalAlpha = star.opacity; ctx.fillStyle = star.color; ctx.shadowColor = star.color; ctx.shadowBlur = star.size * 2; ctx.beginPath(); ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2); ctx.fill(); ctx.restore() }); drawShootingStars(); if (constellationFormed) { drawConstellation() } } function drawShootingStars() { shootingStars.forEach(star => { ctx.save(); ctx.globalAlpha = star.life; ctx.strokeStyle = star.color; ctx.lineWidth = 2; ctx.shadowColor = star.color; ctx.shadowBlur = 10; ctx.beginPath(); ctx.moveTo(star.x, star.y); ctx.lineTo(star.x - star.vx * 10, star.y - star.vy * 10); ctx.stroke(); ctx.restore() }) }    function drawConstellation() {
@@ -550,70 +636,69 @@ document.addEventListener('DOMContentLoaded', function () { initStarfieldCanvas(
                         }
                     }
                 }
-            }
-        });
-        drawConstellationLines();
-        
-        ctx.restore();
-    }
+            }});
+            drawConstellationLines();
+            
+            ctx.restore();
+        }
 
-    function drawConstellationLines() {
-        const bodyConnections = [['divine_crown', 'forehead_left'], ['divine_crown', 'forehead_right'], ['crown_jewel_left', 'divine_crown'], ['crown_jewel_right', 'divine_crown'], ['forehead_left', 'third_eye'], ['forehead_right', 'third_eye'], ['third_eye', 'eye_left'], ['third_eye', 'eye_right'], ['eye_left', 'nose_bridge'], ['eye_right', 'nose_bridge'], ['nose_bridge', 'divine_mouth'], ['ear_left', 'forehead_left'], ['ear_right', 'forehead_right'], ['divine_mouth', 'blessed_neck'], ['blessed_neck', 'shoulder_left'], ['blessed_neck', 'shoulder_right'], ['shoulder_left', 'sacred_heart'], ['shoulder_right', 'sacred_heart']];        const armConnections = [
-            // First set of arms (upper arms)
-            ['shoulder_left', 'arm1_shoulder_left'], ['arm1_shoulder_left', 'arm1_upper_left'], ['arm1_upper_left', 'arm1_elbow_left'], ['arm1_elbow_left', 'arm1_forearm_left'], ['arm1_forearm_left', 'hand1_left'], ['hand1_left', 'conch_shell'], 
-            ['shoulder_right', 'arm1_shoulder_right'], ['arm1_shoulder_right', 'arm1_upper_right'], ['arm1_upper_right', 'arm1_elbow_right'], ['arm1_elbow_right', 'arm1_forearm_right'], ['arm1_forearm_right', 'hand1_right'], ['hand1_right', 'sudarshan_chakra'], 
-            // Second set of arms (lower arms) - connecting to shoulders with correct weapon names
-            ['shoulder_left', 'arm2_shoulder_left'], ['arm2_shoulder_left', 'arm2_upper_left'], ['arm2_upper_left', 'arm2_forearm_left'], ['arm2_forearm_left', 'hand2_left'], ['hand2_left', 'divine_gada'], 
-            ['shoulder_right', 'arm2_shoulder_right'], ['arm2_shoulder_right', 'arm2_upper_right'], ['arm2_upper_right', 'arm2_forearm_right'], ['arm2_forearm_right', 'hand2_right'], ['hand2_right', 'divine_bow']
-        ];const torsoConnections = [['sacred_heart', 'chest_left'], ['sacred_heart', 'chest_right'], ['chest_left', 'navel_chakra'], ['chest_right', 'navel_chakra'], ['navel_chakra', 'waist_left'], ['navel_chakra', 'waist_right'], ['waist_left', 'divine_center'], ['waist_right', 'divine_center'], ['divine_center', 'hip_left'], ['divine_center', 'hip_right']]; const legConnections = [['hip_left', 'thigh_left_upper'], ['thigh_left_upper', 'thigh_left_lower'], ['thigh_left_lower', 'knee_left'], ['knee_left', 'calf_left'], ['calf_left', 'ankle_left'], ['ankle_left', 'foot_left'], ['hip_right', 'thigh_right_upper'], ['thigh_right_upper', 'thigh_right_lower'], ['thigh_right_lower', 'knee_right'], ['knee_right', 'calf_right'], ['calf_right', 'ankle_right'], ['ankle_right', 'foot_right']];        const sheshaConnections = [
-            // Head-to-neck connections
-            ['serpent_head_1', 'serpent_neck_1'],
-            ['serpent_head_2', 'serpent_neck_2'],
-            ['serpent_head_3', 'serpent_neck_3'],
-            ['serpent_head_center', 'serpent_neck_center'],
-            ['serpent_head_5', 'serpent_neck_5'],
-            ['serpent_head_6', 'serpent_neck_6'],
-            ['serpent_head_7', 'serpent_neck_7'],
-            // Neck-to-upper-body connections
-            ['serpent_neck_1', 'serpent_body_upper_1'],
-            ['serpent_neck_2', 'serpent_body_upper_2'],
-            ['serpent_neck_3', 'serpent_body_upper_3'],
-            ['serpent_neck_center', 'serpent_body_upper_center'],
-            ['serpent_neck_5', 'serpent_body_upper_5'],
-            ['serpent_neck_6', 'serpent_body_upper_6'],
-            ['serpent_neck_7', 'serpent_body_upper_7'],
-            // Upper-to-main body connections
-            ['serpent_body_upper_1', 'serpent_body_main_1'],
-            ['serpent_body_upper_2', 'serpent_body_main_2'],
-            ['serpent_body_upper_3', 'serpent_body_main_3'],
-            ['serpent_body_upper_center', 'serpent_body_main_center'],
-            ['serpent_body_upper_5', 'serpent_body_main_5'],
-            ['serpent_body_upper_6', 'serpent_body_main_6'],
-            ['serpent_body_upper_7', 'serpent_body_main_7'],
-            // Main-to-lower body connections
-            ['serpent_body_main_1', 'serpent_body_lower_1'],
-            ['serpent_body_main_2', 'serpent_body_lower_2'],
-            ['serpent_body_main_3', 'serpent_body_lower_3'],
-            ['serpent_body_main_center', 'serpent_body_lower_center'],
-            ['serpent_body_main_5', 'serpent_body_lower_5'],
-            ['serpent_body_main_6', 'serpent_body_lower_6'],
-            ['serpent_body_main_7', 'serpent_body_lower_7'],
-            // Lower body to coils
-            ['serpent_body_lower_1', 'serpent_coil_left_1'],
-            ['serpent_body_lower_2', 'serpent_coil_left_2'],
-            ['serpent_body_lower_center', 'serpent_coil_center'],
-            ['serpent_body_lower_5', 'serpent_coil_right_1'],
-            ['serpent_body_lower_6', 'serpent_coil_right_2'],
-            // Coils to tail
-            ['serpent_coil_left_1', 'serpent_tail_1'],
-            ['serpent_coil_center', 'serpent_tail_2'],
-            ['serpent_coil_right_1', 'serpent_tail_3'],
-            ['serpent_tail_1', 'serpent_tail_end'],
-            ['serpent_tail_2', 'serpent_tail_end'],
-            ['serpent_tail_3', 'serpent_tail_end']
-        ];const divineConnections = [
-            // Removed supreme_light connections
-        ];const auraConnections = [['divine_aura_tl', 'divine_aura_ml'], ['divine_aura_ml', 'divine_aura_bl'], ['divine_aura_tr', 'divine_aura_mr'], ['divine_aura_mr', 'divine_aura_br']]; function drawConnectionSet(connections, strokeStyle, lineWidth, shadowColor, opacity) { ctx.strokeStyle = strokeStyle; ctx.lineWidth = lineWidth; ctx.shadowColor = shadowColor; ctx.shadowBlur = lineWidth * 2; connections.forEach(([start, end]) => { const startStar = mahavishnutStars.find(s => s.name === start); const endStar = mahavishnutStars.find(s => s.name === end); if (startStar && endStar && startStar.formationProgress > 0.7 && endStar.formationProgress > 0.7) { ctx.globalAlpha = Math.min(startStar.opacity, endStar.opacity) * opacity; ctx.beginPath(); ctx.moveTo(startStar.currentX, startStar.currentY); ctx.lineTo(endStar.currentX, endStar.currentY); ctx.stroke() } }) }        drawConnectionSet(bodyConnections, 'rgba(255,215,0,0.8)', 2, '#FFD700', 0.9);
+        function drawConstellationLines() {
+            const bodyConnections = [['divine_crown', 'forehead_left'], ['divine_crown', 'forehead_right'], ['crown_jewel_left', 'divine_crown'], ['crown_jewel_right', 'divine_crown'], ['forehead_left', 'third_eye'], ['forehead_right', 'third_eye'], ['third_eye', 'eye_left'], ['third_eye', 'eye_right'], ['eye_left', 'nose_bridge'], ['eye_right', 'nose_bridge'], ['nose_bridge', 'divine_mouth'], ['ear_left', 'forehead_left'], ['ear_right', 'forehead_right'], ['divine_mouth', 'blessed_neck'], ['blessed_neck', 'shoulder_left'], ['blessed_neck', 'shoulder_right'], ['shoulder_left', 'sacred_heart'], ['shoulder_right', 'sacred_heart']];        const armConnections = [
+                // First set of arms (upper arms)
+                ['shoulder_left', 'arm1_shoulder_left'], ['arm1_shoulder_left', 'arm1_upper_left'], ['arm1_upper_left', 'arm1_elbow_left'], ['arm1_elbow_left', 'arm1_forearm_left'], ['arm1_forearm_left', 'hand1_left'], ['hand1_left', 'conch_shell'], 
+                ['shoulder_right', 'arm1_shoulder_right'], ['arm1_shoulder_right', 'arm1_upper_right'], ['arm1_upper_right', 'arm1_elbow_right'], ['arm1_elbow_right', 'arm1_forearm_right'], ['arm1_forearm_right', 'hand1_right'], ['hand1_right', 'sudarshan_chakra'], 
+                // Second set of arms (lower arms) - connecting to shoulders with correct weapon names
+                ['shoulder_left', 'arm2_shoulder_left'], ['arm2_shoulder_left', 'arm2_upper_left'], ['arm2_upper_left', 'arm2_forearm_left'], ['arm2_forearm_left', 'hand2_left'], ['hand2_left', 'divine_gada'], 
+                ['shoulder_right', 'arm2_shoulder_right'], ['arm2_shoulder_right', 'arm2_upper_right'], ['arm2_upper_right', 'arm2_forearm_right'], ['arm2_forearm_right', 'hand2_right'], ['hand2_right', 'divine_bow']
+            ];const torsoConnections = [['sacred_heart', 'chest_left'], ['sacred_heart', 'chest_right'], ['chest_left', 'navel_chakra'], ['chest_right', 'navel_chakra'], ['navel_chakra', 'waist_left'], ['navel_chakra', 'waist_right'], ['waist_left', 'divine_center'], ['waist_right', 'divine_center'], ['divine_center', 'hip_left'], ['divine_center', 'hip_right']]; const legConnections = [['hip_left', 'thigh_left_upper'], ['thigh_left_upper', 'thigh_left_lower'], ['thigh_left_lower', 'knee_left'], ['knee_left', 'calf_left'], ['calf_left', 'ankle_left'], ['ankle_left', 'foot_left'], ['hip_right', 'thigh_right_upper'], ['thigh_right_upper', 'thigh_right_lower'], ['thigh_right_lower', 'knee_right'], ['knee_right', 'calf_right'], ['calf_right', 'ankle_right'], ['ankle_right', 'foot_right']];        const sheshaConnections = [
+                // Head-to-neck connections
+                ['serpent_head_1', 'serpent_neck_1'],
+                ['serpent_head_2', 'serpent_neck_2'],
+                ['serpent_head_3', 'serpent_neck_3'],
+                ['serpent_head_center', 'serpent_neck_center'],
+                ['serpent_head_5', 'serpent_neck_5'],
+                ['serpent_head_6', 'serpent_neck_6'],
+                ['serpent_head_7', 'serpent_neck_7'],
+                // Neck-to-upper-body connections
+                ['serpent_neck_1', 'serpent_body_upper_1'],
+                ['serpent_neck_2', 'serpent_body_upper_2'],
+                ['serpent_neck_3', 'serpent_body_upper_3'],
+                ['serpent_neck_center', 'serpent_body_upper_center'],
+                ['serpent_neck_5', 'serpent_body_upper_5'],
+                ['serpent_neck_6', 'serpent_body_upper_6'],
+                ['serpent_neck_7', 'serpent_body_upper_7'],
+                // Upper-to-main body connections
+                ['serpent_body_upper_1', 'serpent_body_main_1'],
+                ['serpent_body_upper_2', 'serpent_body_main_2'],
+                ['serpent_body_upper_3', 'serpent_body_main_3'],
+                ['serpent_body_upper_center', 'serpent_body_main_center'],
+                ['serpent_body_upper_5', 'serpent_body_main_5'],
+                ['serpent_body_upper_6', 'serpent_body_main_6'],
+                ['serpent_body_upper_7', 'serpent_body_main_7'],
+                // Main-to-lower body connections
+                ['serpent_body_main_1', 'serpent_body_lower_1'],
+                ['serpent_body_main_2', 'serpent_body_lower_2'],
+                ['serpent_body_main_3', 'serpent_body_lower_3'],
+                ['serpent_body_main_center', 'serpent_body_lower_center'],
+                ['serpent_body_main_5', 'serpent_body_lower_5'],
+                ['serpent_body_main_6', 'serpent_body_lower_6'],
+                ['serpent_body_main_7', 'serpent_body_lower_7'],
+                // Lower body to coils
+                ['serpent_body_lower_1', 'serpent_coil_left_1'],
+                ['serpent_body_lower_2', 'serpent_coil_left_2'],
+                ['serpent_body_lower_center', 'serpent_coil_center'],
+                ['serpent_body_lower_5', 'serpent_coil_right_1'],
+                ['serpent_body_lower_6', 'serpent_coil_right_2'],
+                // Coils to tail
+                ['serpent_coil_left_1', 'serpent_tail_1'],
+                ['serpent_coil_center', 'serpent_tail_2'],
+                ['serpent_coil_right_1', 'serpent_tail_3'],
+                ['serpent_tail_1', 'serpent_tail_end'],
+                ['serpent_tail_2', 'serpent_tail_end'],
+                ['serpent_tail_3', 'serpent_tail_end']
+            ];const divineConnections = [
+                // Removed supreme_light connections
+            ];const auraConnections = [['divine_aura_tl', 'divine_aura_ml'], ['divine_aura_ml', 'divine_aura_bl'], ['divine_aura_tr', 'divine_aura_mr'], ['divine_aura_mr', 'divine_aura_br']]; function drawConnectionSet(connections, strokeStyle, lineWidth, shadowColor, opacity) { ctx.strokeStyle = strokeStyle; ctx.lineWidth = lineWidth; ctx.shadowColor = shadowColor; ctx.shadowBlur = lineWidth * 2; connections.forEach(([start, end]) => { const startStar = mahavishnutStars.find(s => s.name === start); const endStar = mahavishnutStars.find(s => s.name === end); if (startStar && endStar && startStar.formationProgress > 0.7 && endStar.formationProgress > 0.7) { ctx.globalAlpha = Math.min(startStar.opacity, endStar.opacity) * opacity; ctx.beginPath(); ctx.moveTo(startStar.currentX, startStar.currentY); ctx.lineTo(endStar.currentX, endStar.currentY); ctx.stroke() } }) }        drawConnectionSet(bodyConnections, 'rgba(255,215,0,0.8)', 2, '#FFD700', 0.9);
         drawConnectionSet(armConnections, 'rgba(255,215,0,0.7)', 1.5, '#FFD700', 0.8);
         drawConnectionSet(torsoConnections, 'rgba(255,215,0,0.8)', 2, '#FFD700', 0.9);
         drawConnectionSet(legConnections, 'rgba(255,215,0,0.7)', 1.5, '#FFD700', 0.8);
