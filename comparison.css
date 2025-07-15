@@ -30,7 +30,7 @@ body{font-family:'SF Pro Display','SF Pro Text',-apple-system,BlinkMacSystemFont
 .container{max-width:1400px;margin:0 auto;padding:0 2rem;}
 .hero-content-cosmic{max-width:900px;margin:0 auto;position:relative;}
 .cosmic-title{font-size:3.5rem;font-weight:700;margin-bottom:1.5rem;background:linear-gradient(135deg,#f0f6fc 25%,#388bfd 50%,#a371f7 75%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:titlePulse 4s ease-in-out infinite;text-shadow:0 0 40px rgba(56,139,253,0.3);}
-.vs-text{color:#ff7b72;font-weight:800;text-shadow:0 0 20px rgba(255,123,114,0.6);margin:0 1.5rem;filter:brightness(1.2);}
+.vs-text{color:#ff7b72;font-weight:800;text-shadow:0 0 20px rgba(255,123,114,0.6);margin:0 1.5rem;}
 .srac-highlight{background:linear-gradient(135deg,#238636,#2ea043,#7ce38b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
 .cosmic-subtitle{font-size:1.3rem;color:#8b949e;line-height:1.8;margin-bottom:2rem;font-weight:400;}
 .energy-wave{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);width:300px;height:3px;background:linear-gradient(90deg,transparent,#388bfd,#a371f7,#388bfd,transparent);border-radius:2px;animation:energyPulse 4s ease-in-out infinite;}
