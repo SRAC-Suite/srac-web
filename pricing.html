@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SRAC Analysis Service - Pricing Calculator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="pricing.css">
+</head>
+<body>
+    <div class="cosmic-background">
+        <canvas id="starfield-canvas" class="starfield-canvas"></canvas>
+        <div class="nebula-layer"></div>
+        <div class="cosmic-particles"></div>
+        <div class="earth-container">
+            <div class="earth">
+                <div class="earth-atmosphere"></div>
+                <div class="earth-clouds"></div>
+                <div class="satellite satellite1"></div>
+                <div class="satellite satellite2"></div>
+                <div class="satellite satellite3"></div>
+                <div class="satellite satellite4"></div>
+                <div class="satellite satellite5"></div>
+                <div class="satellite satellite6"></div>
+                <div class="satellite satellite7"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar-cosmic">
+        <div class="nav-container-cosmic">
+            <div class="nav-logo-cosmic">
+                <div class="logo-icon-cosmic">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                SRAC Analysis Service
+            </div>
+            <ul class="nav-menu-cosmic">
+                <li><a href="index.html" class="nav-link-cosmic">Home</a></li>
+                <li><a href="capabilities.html" class="nav-link-cosmic">Capabilities</a></li>
+                <li><a href="use_case.html" class="nav-link-cosmic">Use Cases</a></li>
+                <li><a href="comparison.html" class="nav-link-cosmic">Comparison</a></li>
+                <li><a href="FAQ.html" class="nav-link-cosmic">FAQ</a></li>
+                <li><a href="pricing.html" class="nav-link-cosmic active">Pricing</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-pricing">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="cosmic-title">
+                    <span class="gradient-text">SRAC Pricing Calculator</span>
+                </h1>
+                <p class="cosmic-subtitle">Advanced Academic Performance Analysis - Get Your Quote</p>
+                <div class="availability-notice">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>Available only for ACS College and RRC Institute</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Tiers Overview -->
+    <section class="pricing-tiers">
+        <div class="container">
+            <h2 class="section-title">Service Pricing Tiers</h2>
+            <div class="tiers-grid">
+                <div class="tier-card featured" data-tier="normal">
+                    <div class="featured-badge">Recommended</div>
+                    <div class="tier-header">
+                        <h3>Normal Analysis</h3>
+                        <div class="tier-price">₹180-₹250</div>
+                        <div class="tier-time">Deliberately delivered after 2 Days (to provide leverage for Express)</div>
+                    </div>
+                    <div class="tier-features">
+                        <ul>
+                            <li><i class="fas fa-check"></i> Complete Performance Analysis</li>
+                            <li><i class="fas fa-check"></i> Subject-wise Breakdown</li>
+                            <li><i class="fas fa-check"></i> Formatted Report</li>
+                            <li><i class="fas fa-check"></i> Grade Predictions</li>
+                            <li><i class="fas fa-check"></i> Fail Count Analysis</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="tier-card" data-tier="express">
+                    <div class="featured-badge">Most Popular</div>
+                    <div class="tier-header">
+                        <h3>Express Analysis</h3>
+                        <div class="tier-price">₹750</div>
+                        <div class="tier-time">Ultra Priority - delivered within 15 Minutes</div>
+                    </div>
+                    <div class="tier-features">
+                        <ul>
+                            <li><i class="fas fa-check"></i> Everything in Normal</li>
+                            <li><i class="fas fa-check"></i> Priority Processing</li>
+                            <li><i class="fas fa-check"></i> Instant Generation</li>
+                            <li><i class="fas fa-check"></i> Advanced Insights</li>
+                            <li><i class="fas fa-check"></i> Direct Consultation</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="tier-card" data-tier="deprecated" style="opacity: 0.5; border-color: #666;">
+                    <div class="tier-header">
+                        <h3>Format Check Only</h3>
+                        <div class="tier-price">DEPRECATED</div>
+                        <div class="tier-time">Not Available for ACS & RRC</div>
+                    </div>
+                    <div class="tier-features">
+                        <ul>
+                            <li><i class="fas fa-times opacity-50"></i> Service Discontinued</li>
+                            <li><i class="fas fa-times opacity-50"></i> Not Available</li>
+                            <li><i class="fas fa-times opacity-50"></i> Use Normal Analysis</li>
+                            <li><i class="fas fa-times opacity-50"></i> Contact for Alternatives</li>
+                            <li><i class="fas fa-times opacity-50"></i> Legacy Service</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Calculator Section -->
+    <section class="calculator-section">
+        <div class="container">
+            <h2 class="section-title">Pricing Calculator</h2>
+            <p class="section-subtitle">Get an accurate quote for your analysis needs</p>
+            
+            <div class="calculator-container">
+                <div class="calculator-form">
+                    <form id="pricingForm">
+                        <div class="form-group">
+                            <label for="analysisType">
+                                <i class="fas fa-chart-line"></i>
+                                Analysis Type
+                            </label>
+                            <select id="analysisType" required>
+                                <option value="normal">Normal Analysis (Generated instantly, delivered within 2 Days) - ₹180-₹250</option>
+                                <option value="express">Express Analysis (Generated instantly, delivered within 15 Minutes) - ₹750</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="studentCount">
+                                <i class="fas fa-users"></i>
+                                Number of Students (Per Section)
+                            </label>
+                                                        <input type="number" id="studentCount" max="10000" value="20" required>
+                            <small class="input-note">Minimum 20 students required. Pricing: ₹x × total students = final amount</small>
+                            <div class="section-warning">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <strong>Important:</strong> Minimum 20 students required per quote. This quote is valid for ONE SECTION only. 
+                                Multiple sections require separate quotes and payments as each section 
+                                gets its own individual report output.
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                                <i class="fas fa-file-alt"></i>
+                                Report Format (Select multiple formats)
+                            </label>
+                            <div class="checkbox-group">
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="format_excel" value="excel" checked>
+                                    <label for="format_excel">Excel Analysis Report - Free</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="format_combined" value="combined">
+                                    <label for="format_combined">Combined PDF (All Students) - Free</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="format_subject" value="subject">
+                                    <label for="format_subject">Subject-Specific Analysis - Free</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="format_word" value="word">
+                                    <label for="format_word">Word Document Format - Free</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="format_detailed" value="detailed">
+                                    <label for="format_detailed">Detailed Report (+₹10)</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="format_presentation" value="presentation">
+                                    <label for="format_presentation">Graph-compatible Excel (Upload Excel in web UI to generate detailed graphs ...) (+₹30)</label>
+                                </div>
+                            </div>
+                            <small class="input-note">Select one or more report formats. Free formats have no additional cost.</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="contactName">
+                                <i class="fas fa-user"></i>
+                                Your Name
+                            </label>
+                            <input type="text" id="contactName" placeholder="Enter your name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="contactEmail">
+                                <i class="fas fa-envelope"></i>
+                                Email Address (For PDF Report Delivery)
+                            </label>
+                            <input type="email" id="contactEmail" placeholder="Enter your email" required>
+                            <small class="input-note">All reports will be delivered as PDF attachments via email</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="institution">
+                                <i class="fas fa-university"></i>
+                                Institution
+                            </label>
+                            <select id="institution" required>
+                                <option value="">Select Institution</option>
+                                <option value="acs">ACS College</option>
+                                <option value="rrc">RRC Institute</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn-calculate">
+                            <i class="fas fa-calculator"></i>
+                            Calculate Price
+                        </button>
+                    </form>
+                </div>
+
+                <div class="calculator-result" id="calculatorResult">
+                    <div class="result-header">
+                        <h3><i class="fas fa-receipt"></i> Price Breakdown</h3>
+                        <div class="result-status" id="resultStatus">
+                            <i class="fas fa-info-circle"></i>
+                            Fill the form to see pricing
+                        </div>
+                    </div>
+
+                    <div class="breakdown-container" id="breakdownContainer" style="display: none;">
+                        <div class="breakdown-items">
+                            <div class="breakdown-item">
+                                <span class="item-label">Per Student Rate:</span>
+                                <span class="item-value" id="basePrice">₹100</span>
+                            </div>
+                            <div class="breakdown-item">
+                                <span class="item-label">Student Cost:</span>
+                                <span class="item-value" id="hardwareFee">₹0</span>
+                            </div>
+                            <div class="breakdown-item">
+                                <span class="item-label">Format Fee:</span>
+                                <span class="item-value" id="laborFee">₹0</span>
+                            </div>
+                            <div class="breakdown-item">
+                                <span class="item-label">Final Amount:</span>
+                                <span class="item-value" id="licenseFee">₹0</span>
+                            </div>
+                            <div class="breakdown-item" id="perStudentItem" style="display: none;">
+                                <span class="item-label">Per Student Cost:</span>
+                                <span class="item-value" id="perStudentCost">₹0 × 20 students</span>
+                            </div>
+                            <div class="breakdown-item complexity-fee" id="complexityFeeItem" style="display: none;">
+                                <span class="item-label">Complexity Fee:</span>
+                                <span class="item-value" id="complexityFee">₹0</span>
+                            </div>
+                            <div class="breakdown-item urgency-fee" id="urgencyFeeItem" style="display: none;">
+                                <span class="item-label">Urgency Fee:</span>
+                                <span class="item-value" id="urgencyFee">₹0</span>
+                            </div>
+                            <div class="breakdown-item format-fee" id="formatFeeItem" style="display: none;">
+                                <span class="item-label">Additional Format Fee:</span>
+                                <span class="item-value" id="formatFee">₹0</span>
+                            </div>
+                            <div class="breakdown-item daily-variation" id="dailyVariationItem" style="display: none;">
+                                <span class="item-label">Daily Variation:</span>
+                                <span class="item-value" id="dailyVariation">₹0</span>
+                            </div>
+                        </div>
+
+                        <div class="breakdown-total">
+                            <div class="total-line">
+                                <span class="total-label">Total Amount:</span>
+                                <span class="total-value" id="totalPrice">₹0</span>
+                            </div>
+                        </div>
+
+                        <div class="delivery-info">
+                            <div class="delivery-item">
+                                <i class="fas fa-clock"></i>
+                                <span id="deliveryTime">Delivery: TBD</span>
+                            </div>
+                            <div class="delivery-item">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>Pay First Policy - No work without advance payment</span>
+                            </div>
+                        </div>
+
+                        <div class="quote-actions">
+                            <button class="btn-action primary" onclick="generateQuote()">
+                                <i class="fas fa-file-download"></i>
+                                Download Quote Text
+                            </button>
+                            <button class="btn-action secondary" onclick="requestSample()">
+                                <i class="fas fa-eye"></i>
+                                View Sample
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Availability & Booking Section -->
+    <section class="availability-section">
+        <div class="container">
+            <h2 class="section-title">📅 Book Your Analysis Service</h2>
+            <p class="section-subtitle">Ready to proceed? Here's how to book and complete your order</p>
+            
+            <div class="availability-container">
+                <div class="booking-steps">
+                    <div class="step-card">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h3><i class="fas fa-calculator"></i> Generate Quote</h3>
+                            <p>Use the calculator above to get your pricing and download the quote text file. Save the quote ID for reference.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="step-card">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h3><i class="fas fa-credit-card"></i> Make Payment</h3>
+                            <p>Complete payment using any digital method (UPI, Bank Transfer, etc.). Take a screenshot of the payment confirmation.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="step-card">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h3><i class="fas fa-envelope"></i> Contact & Submit</h3>
+                            <p>Share your quote image, payment screenshot, and data files using the contact methods below.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="contact-methods">
+                    <div class="method-card acs-method">
+                        <div class="method-header">
+                            <div class="method-icon">
+                                <i class="fas fa-university"></i>
+                            </div>
+                            <h3>ACS College Students</h3>
+                        </div>
+                        <div class="method-content">
+                            <div class="contact-option primary">
+                                <i class="fas fa-user-tie"></i>
+                                <div>
+                                    <h4>Meet in Person (Recommended)</h4>
+                                    <p><strong>Location:</strong> CSE Department, Final Year Block<br>
+                                    <strong>Room:</strong> 103, Section C<br>
+                                    <strong>Ask for:</strong> "Tanishq" (SRAC Service)</p>
+                                </div>
+                            </div>
+                            <div class="contact-option">
+                                <i class="fas fa-envelope"></i>
+                                <div>
+                                    <h4>Email Contact</h4>
+                                    <p><strong>Email:</strong> tanishqurmi@gmail.com<br>
+                                    <strong>Faculty Reference:</strong> Any CSE faculty member<br>
+                                    <strong>Required:</strong> Use your college official email</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="method-card rrc-method">
+                        <div class="method-header">
+                            <div class="method-icon">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <h3>RRC Institute Students</h3>
+                        </div>
+                        <div class="method-content">
+                            <div class="contact-option primary">
+                                <i class="fas fa-envelope"></i>
+                                <div>
+                                    <h4>Email Only</h4>
+                                    <p><strong>Email:</strong> tanishqurmi@gmail.com<br>
+                                    <strong>Important:</strong> Use your college official email ONLY<br>
+                                    <strong>Note:</strong> Other emails will not be replied to</p>
+                                </div>
+                            </div>
+                            <div class="contact-option">
+                                <i class="fas fa-phone"></i>
+                                <div>
+                                    <h4>Phone Support</h4>
+                                    <p><strong>Availability:</strong> Number will be shared via email if needed<br>
+                                    <strong>Process:</strong> Email first, phone details follow</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="requirements-section">
+                    <h3><i class="fas fa-clipboard-list"></i> Data Requirements & Format</h3>
+                    <div class="requirements-grid">
+                        <div class="requirement-card">
+                            <h4><i class="fas fa-table"></i> Excel Sheet Format</h4>
+                            <div class="format-details">
+                                <p><strong>Required Columns:</strong></p>
+                                <ul>
+                                    <li>USN (University Seat Number) containing Excel</li>
+                                </ul>
+                                <div class="format-example">
+                                    <strong>Example:</strong> USN | Data1 | Data2 | Data3 | ...
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="requirement-card">
+                            <h4><i class="fas fa-exclamation-triangle"></i> Important Notes</h4>
+                            <div class="notes-list">
+                                <div class="note-item">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Use proper USN format as per university standards</span>
+                                </div>
+                                <div class="note-item">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Include credit scores in format: SubjectCode(Credits)</span>
+                                </div>
+                                <div class="note-item">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>One Excel file per section/class</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="requirement-card">
+                            <h4><i class="fas fa-shield-alt"></i> Quality Assurance</h4>
+                            <div class="qa-details">
+                                <p><strong>Before Submission:</strong></p>
+                                <ul>
+                                    <li>✅ Verify all USN numbers are correct</li>
+                                    <li>✅ Ensure credit scores are accurate</li>
+                                    <li>✅ Test file opens properly in Excel</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="submission-checklist">
+                    <h3><i class="fas fa-tasks"></i> Submission Checklist</h3>
+                    <div class="checklist-container">
+                        <div class="checklist-column">
+                            <h4>📋 Documents Required:</h4>
+                            <div class="checklist-items">
+                                <label class="checklist-item">
+                                    <input type="checkbox" class="checklist-checkbox">
+                                    <span class="checkmark"></span>
+                                    Quote text file (downloaded from calculator)
+                                </label>
+                                <label class="checklist-item">
+                                    <input type="checkbox" class="checklist-checkbox">
+                                    <span class="checkmark"></span>
+                                    Payment screenshot with transaction ID
+                                </label>
+                                <label class="checklist-item">
+                                    <input type="checkbox" class="checklist-checkbox">
+                                    <span class="checkmark"></span>
+                                    Excel file with student data (proper format)
+                                </label>
+                                <label class="checklist-item">
+                                    <input type="checkbox" class="checklist-checkbox">
+                                    <span class="checkmark"></span>
+                                    Contact details and institutional email
+                                </label>
+                            </div>
+                        </div>
+                        <div class="checklist-column">
+                            <h4>✅ Verification Steps:</h4>
+                            <div class="checklist-items">
+                                <label class="checklist-item">
+                                    <input type="checkbox" class="checklist-checkbox">
+                                    <span class="checkmark"></span>
+                                    Quote ID matches calculator output
+                                </label>
+                                <label class="checklist-item">
+                                    <input type="checkbox" class="checklist-checkbox">
+                                    <span class="checkmark"></span>
+                                    Payment amount matches quote total
+                                </label>
+                                <label class="checklist-item">
+                                    <input type="checkbox" class="checklist-checkbox">
+                                    <span class="checkmark"></span>
+                                    Excel format verified and tested
+                                </label>
+                                <label class="checklist-item">
+                                    <input type="checkbox" class="checklist-checkbox">
+                                    <span class="checkmark"></span>
+                                    Used official college email address
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-info">
+                    <h3><i class="fas fa-clock"></i> Service Timeline</h3>
+                    <div class="timeline-steps">
+                        <div class="timeline-step">
+                            <div class="timeline-marker">📋</div>
+                            <div class="timeline-content">
+                                <h4>Quote Generation</h4>
+                                <p>Instant - Use calculator above</p>
+                            </div>
+                        </div>
+                        <div class="timeline-step">
+                            <div class="timeline-marker">💳</div>
+                            <div class="timeline-content">
+                                <h4>Payment & Submission</h4>
+                                <p>Your timeline - Complete when ready</p>
+                            </div>
+                        </div>
+                        <div class="timeline-step">
+                            <div class="timeline-marker">⚡</div>
+                            <div class="timeline-content">
+                                <h4>Processing Confirmation</h4>
+                                <p>Within 2-4 hours of submission</p>
+                            </div>
+                        </div>
+                        <div class="timeline-step">
+                            <div class="timeline-marker">📊</div>
+                            <div class="timeline-content">
+                                <h4>Report Delivery</h4>
+                                <p>Normal: 2 Days | Express: 15 Minutes</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Policies Section -->
+    <section class="policies-section">
+        <div class="container">
+            <h2 class="section-title">Service Policies & Rules</h2>
+            <div class="policies-grid">
+                <div class="policy-card">
+                    <div class="policy-icon">
+                        <i class="fas fa-user-friends"></i>
+                    </div>
+                    <h3>ACS College Users</h3>
+                    <p>If you are from ACS College, please contact Tanishq personally for better communication or queries.</p>
+                </div>
+                <div class="policy-card">
+                    <div class="policy-icon">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                    <h3>Pay First Policy</h3>
+                    <p>Full payment must be made in advance. No work begins without confirmed payment.</p>
+                </div>
+
+                <div class="policy-card">
+                    <div class="policy-icon">
+                        <i class="fas fa-file-check"></i>
+                    </div>
+                    <h3>Correct Format Mandatory</h3>
+                    <p>Data files must follow SRAC's required structure. Format check available for ₹100.</p>
+                </div>
+
+                <div class="policy-card">
+                    <div class="policy-icon">
+                        <i class="fas fa-redo"></i>
+                    </div>
+                    <h3>Re-analysis Policy</h3>
+                    <p>Each analysis run counts as a new request. Re-analysis requires full payment.</p>
+                </div>
+
+                <div class="policy-card">
+                    <div class="policy-icon">
+                        <i class="fas fa-download"></i>
+                    </div>
+                    <h3>Report Delivery</h3>
+                    <p>Digital reports via WhatsApp or email if needed with comprehensive analysis and detailed breakdown.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section">
+        <div class="container">
+            <h2 class="section-title">Contact & Location</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h4>Location</h4>
+                            <p>CSE Department, Final Year Block<br>
+                            Room No. 103, Section C<br>
+                            Ask any faculty for "Tanishq"</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-quote-right"></i>
+                        <div>
+                            <h4>Professional Excellence</h4>
+                            <p><strong>"Trusted by Faculty & Students"</strong><br>
+                            Recognized for consistent quality delivery and technical expertise in academic data analysis.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer-cosmic">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo-icon-cosmic">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <span>SRAC Analysis Service</span>
+                </div>
+                <div class="footer-text">
+                    <p>Advanced Academic Performance Analysis & Prediction System</p>
+                    <p>&copy; 2025 SRAC. Transforming data into insights.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="pricing.js"></script>
+</body>
+</html>
