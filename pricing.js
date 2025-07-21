@@ -3,6 +3,8 @@ document.addEventListener('DOMContentLoaded', function() {
     initPricingCalculator();
     initFormValidation();
     initTierSelection();
+    initMobileMenu();
+    initFormatDropdown();
 });
 
 function initStarfieldCanvas() {
@@ -206,43 +208,55 @@ function calculateDetailedPricing(data) {
     let perStudentRate = 0;
     let deliveryTime = '';
     let total = 0;
+    let studentLimitError = '';
 
     // Determine pricing based on analysis type and student count
     switch (data.analysisType) {
         case 'normal':
+            // Normal Analysis: 20-100 students maximum, capped pricing
             if (data.studentCount < 20) {
-                // Less than 20 students: Show as minimum 20 pricing but display actual student count
-                total = 180; // Minimum total for 20 students
-                perStudentRate = total / Math.max(data.studentCount, 1); // Avoid division by zero
+                studentLimitError = 'Minimum 20 students required for Normal Analysis';
+                total = 180; // Show minimum pricing
+                perStudentRate = 9; // ₹9 per student minimum
+            } else if (data.studentCount > 100) {
+                studentLimitError = 'Normal Analysis limited to maximum 100 students. For larger batches, use Express Analysis.';
+                total = 250; // Cap at maximum
+                perStudentRate = 2.5; // Show capped rate
             } else if (data.studentCount >= 20 && data.studentCount <= 40) {
-                // For 20-40 students: Total ranges from ₹180 to ₹210
-                const progress = (data.studentCount - 20) / (40 - 20); // 0 to 1
-                total = 180 + (progress * (210 - 180)); // Linear interpolation from 180 to 210
+                // For 20-40 students: ₹180-210 (₹9-5.25 per student)
+                const progress = (data.studentCount - 20) / (40 - 20);
+                total = 180 + (progress * (210 - 180));
                 perStudentRate = total / data.studentCount;
-            } else if (data.studentCount >= 41 && data.studentCount <= 60) {
-                // For 41-60 students: Total ranges from ₹180 to ₹250
-                const progress = (data.studentCount - 40) / (60 - 40); // 0 to 1
-                total = 180 + (progress * (250 - 180)); // Linear interpolation from 180 to 250
-                perStudentRate = total / data.studentCount;
-            } else {
-                // For 60+ students: Capped at ₹250
-                total = 250;
-                perStudentRate = total / data.studentCount;
-            }
-            deliveryTime = 'Generated instantly, deliberately delivered after 2 Days';
+        } else if (data.studentCount >= 41 && data.studentCount <= 79) {
+            // For 41-79 students: ₹210-250 (scaling up toward cap)
+            const progress = (data.studentCount - 41) / (79 - 41);
+            total = 210 + (progress * (250 - 210));
+            perStudentRate = total / data.studentCount;
+        } else if (data.studentCount >= 80 && data.studentCount <= 100) {
+            // For 80-100 students: capped at ₹250
+            total = 250;
+            perStudentRate = total / data.studentCount;
+        }
+            deliveryTime = 'Generated instantly, deliberately delivered after 2 Days (to provide leverage for Express)';
             break;
 
         case 'express':
-            // Express pricing: Fixed ₹750 regardless of student count (premium service)
-            total = 750;
-            perStudentRate = total / Math.max(data.studentCount, 1); // Avoid division by zero
-            deliveryTime = 'Generated instantly, delivered within 15 Minutes (Ultra Priority)';
+            // Express Analysis: Unlimited students, premium service
+            if (data.studentCount < 20) {
+                studentLimitError = 'Minimum 20 students required for Express Analysis';
+                total = 750;
+                perStudentRate = 37.5; // ₹37.5 per student minimum
+            } else {
+                // Fixed ₹750 regardless of student count (unlimited)
+                total = 750;
+                perStudentRate = total / data.studentCount;
+            }
+            deliveryTime = 'Generated instantly, delivered within 15 Minutes (Ultra Priority, Unlimited Students)';
             break;
             
         default:
-            // Default to normal pricing calculation for 20 students
             total = 180;
-            perStudentRate = total / Math.max(data.studentCount, 1);
+            perStudentRate = 9;
             deliveryTime = 'Please select analysis type';
     }
 
@@ -250,11 +264,8 @@ function calculateDetailedPricing(data) {
     let formatFee = 0;
     data.reportFormat.forEach(format => {
         switch (format) {
-            case 'detailed':
-                formatFee += 10;
-                break;
             case 'presentation':
-                formatFee += 30;
+                formatFee += 20;
                 break;
             case 'digital':
             case 'excel':
@@ -271,12 +282,13 @@ function calculateDetailedPricing(data) {
     const finalTotal = total + formatFee;
 
     return {
-        perStudentRate: Math.ceil(perStudentRate * 10) / 10, // Round to 1 decimal place using ceiling
+        perStudentRate: Math.ceil(perStudentRate * 10) / 10,
         studentCount: data.studentCount,
-        studentCost: Math.ceil(total * 10) / 10, // Round to 1 decimal place using ceiling
-        formatFee: Math.ceil(formatFee * 10) / 10, // Round format fee too
-        total: Math.ceil(finalTotal * 10) / 10, // Round final total using ceiling
-        deliveryTime
+        studentCost: Math.ceil(total * 10) / 10,
+        formatFee: Math.ceil(formatFee * 10) / 10,
+        total: Math.ceil(finalTotal * 10) / 10,
+        deliveryTime,
+        studentLimitError
     };
 }
 
@@ -300,6 +312,27 @@ function displayPricingBreakdown(pricing, formData) {
     const analysisTypeLabel = formData.analysisType === 'normal' ? 'Normal Analysis' : 
                              formData.analysisType === 'express' ? 'Express Analysis' : 'Analysis';
     
+    // Handle student limit errors
+    if (pricing.studentLimitError) {
+        const errorElement = document.createElement('div');
+        errorElement.className = 'student-limit-warning';
+        errorElement.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${pricing.studentLimitError}`;
+        
+        // Show error in the breakdown container
+        const breakdownContainer = document.getElementById('breakdownContainer');
+        const existingWarning = breakdownContainer.querySelector('.student-limit-warning');
+        if (existingWarning) {
+            existingWarning.remove();
+        }
+        breakdownContainer.insertBefore(errorElement, breakdownContainer.firstChild);
+    } else {
+        // Remove any existing warnings
+        const existingWarning = document.getElementById('breakdownContainer').querySelector('.student-limit-warning');
+        if (existingWarning) {
+            existingWarning.remove();
+        }
+    }
+    
     // Handle multiple report formats in status
     let formatInfo = '';
     if (Array.isArray(formData.reportFormat)) {
@@ -310,7 +343,10 @@ function displayPricingBreakdown(pricing, formData) {
     const statusText = formData.contactName ? 
         `Quote for ${formData.contactName} - ${analysisTypeLabel} for ${formData.studentCount} students${formatInfo}` :
         `${analysisTypeLabel} calculated for ${formData.studentCount} students${formatInfo}`;
-    showStatus(statusText, 'success');
+    
+    // Show different status based on whether there's an error
+    const statusType = pricing.studentLimitError ? 'warning' : 'success';
+    showStatus(statusText, statusType);
 }
 
 function toggleFeeItem(itemId, show) {
@@ -322,7 +358,13 @@ function toggleFeeItem(itemId, show) {
 
 function showStatus(message, type = 'info') {
     const statusElement = document.getElementById('resultStatus');
-    statusElement.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'}"></i> ${message}`;
+    const iconMap = {
+        'success': 'check-circle',
+        'warning': 'exclamation-triangle',
+        'error': 'times-circle',
+        'info': 'info-circle'
+    };
+    statusElement.innerHTML = `<i class="fas fa-${iconMap[type] || iconMap.info}"></i> ${message}`;
     statusElement.className = `result-status ${type}`;
 }
 
@@ -496,7 +538,7 @@ function validateForm() {
     // Check if at least one report format is selected
     const formatCheckboxes = document.querySelectorAll('input[type="checkbox"][id^="format_"]:checked');
     if (formatCheckboxes.length === 0) {
-        const firstCheckbox = document.getElementById('format_digital');
+        const firstCheckbox = document.getElementById('format_excel');
         showFieldError(firstCheckbox, 'Please select at least one report format');
         firstCheckbox.scrollIntoView({ behavior: 'smooth', block: 'center' });
         return false;
@@ -521,8 +563,7 @@ function generateQuoteTextSummary(quoteData) {
                 'combined': 'Combined PDF (All Students) - Free',
                 'subject': 'Subject-Specific Analysis - Free',
                 'word': 'Word Document Format - Free',
-                'detailed': 'Detailed Report (+₹10)',
-                'presentation': 'Graph-compatible Excel (Upload Excel in web UI to generate detailed graphs ...) (+₹30)'
+                'presentation': 'Graph-compatible Excel (Upload Excel in web UI to generate detailed graphs) (+₹20)'
             };
             return formatNames[f] || f;
         }).join(', ') : 'Excel Analysis Report';
@@ -533,8 +574,7 @@ function generateQuoteTextSummary(quoteData) {
     const analysisTypeLabel = quoteData.analysisType === 'normal' ? 'Normal Analysis' : 
                              quoteData.analysisType === 'express' ? 'Express Analysis' : 'Analysis';
 
-    const quoteSummary = `
-╔══════════════════════════════════════════════════════════════╗
+    const quoteSummary = `╔══════════════════════════════════════════════════════════════╗
 ║                    SRAC ANALYSIS SERVICE                     ║
 ║                   PRICE ESTIMATION QUOTE                     ║
 ╚══════════════════════════════════════════════════════════════╝
@@ -561,8 +601,7 @@ function generateQuoteTextSummary(quoteData) {
    ────────────────────────────────────
    TOTAL AMOUNT: ₹${quoteData.total}
 
-⏰ DELIVERY:
-   ${quoteData.deliveryTime}
+⏰ DELIVERY: ${quoteData.deliveryTime}
 
 📋 IMPORTANT POLICIES:
    • Payment required in advance before work begins
@@ -584,25 +623,97 @@ function generateQuoteTextSummary(quoteData) {
 ═══════════════════════════════════════════════════════════════
 NOTE: This is a price estimation, not a final invoice.
 For official quotation and service booking, please contact directly.
-═══════════════════════════════════════════════════════════════
-    `.trim();
+═══════════════════════════════════════════════════════════════`;
 
-    // Create a text file and download it
-    const blob = new Blob([quoteSummary], { type: 'text/plain' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `SRAC_Quote_${quoteData.quoteId}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    window.URL.revokeObjectURL(url);
-    
-    // Also create a visual quote card for copying/sharing
-    createVisualQuoteCard(quoteData, quoteSummary);
-    
-    alert(`Quote ${quoteData.quoteId} generated successfully!\nText file downloaded. Check below for visual quote card.`);
+    // Show popup instead of downloading
+    showQuotePopup(quoteSummary, quoteData);
 }
+
+function showQuotePopup(quoteSummary, quoteData) {
+    // Create the popup HTML
+    const popupHTML = `
+        <div class="quote-popup" id="quotePopup">
+            <div class="quote-popup-content">
+                <div class="quote-popup-header">
+                    <h3><i class="fas fa-receipt"></i> Your SRAC Analysis Quote</h3>
+                    <button class="quote-popup-close" onclick="closeQuotePopup()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div>
+                    <p style="color: #9ca3af; margin-bottom: 1rem;">
+                        Copy the text below and paste it when contacting us for service booking:
+                    </p>
+                    <textarea class="quote-text-area" id="quoteTextArea" readonly>${quoteSummary}</textarea>
+                    <div class="quote-actions">
+                        <button class="btn-copy-quote" onclick="copyQuoteText()">
+                            <i class="fas fa-copy"></i> Copy Quote Text
+                        </button>
+                        <button class="btn-copy-quote" onclick="closeQuotePopup()" style="background: #dc3545;">
+                            <i class="fas fa-times"></i> Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Add to document
+    document.body.insertAdjacentHTML('beforeend', popupHTML);
+    
+    // Add event listener for escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeQuotePopup();
+        }
+    });
+    
+    // Add click outside to close
+    document.getElementById('quotePopup').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeQuotePopup();
+        }
+    });
+}
+
+// Global functions for popup actions
+window.closeQuotePopup = function() {
+    const popup = document.getElementById('quotePopup');
+    if (popup) {
+        popup.remove();
+    }
+};
+
+window.copyQuoteText = function() {
+    const textArea = document.getElementById('quoteTextArea');
+    if (textArea) {
+        textArea.select();
+        textArea.setSelectionRange(0, 99999); // For mobile devices
+        
+        try {
+            document.execCommand('copy');
+            
+            // Show success feedback
+            const copyBtn = document.querySelector('.btn-copy-quote');
+            const originalText = copyBtn.innerHTML;
+            copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            copyBtn.style.background = '#28a745';
+            
+            setTimeout(() => {
+                copyBtn.innerHTML = originalText;
+                copyBtn.style.background = 'linear-gradient(135deg, #4a90e2, #8a2be2)';
+            }, 2000);
+            
+        } catch (err) {
+            // Fallback for modern browsers
+            navigator.clipboard.writeText(textArea.value).then(() => {
+                alert('Quote copied to clipboard!');
+            }).catch(() => {
+                alert('Unable to copy. Please select and copy manually.');
+            });
+        }
+    }
+};
 
 function createVisualQuoteCard(quoteData, quoteSummary) {
     // Create a modal or overlay with the quote information for easy copying
@@ -757,8 +868,312 @@ const additionalCSS = `
 .result-status.info {
     color: #7d8590;
 }
+
+.mobile-menu-toggle {
+    display: none;
+    color: #fff;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.mobile-menu-toggle:hover {
+    background: rgba(74, 144, 226, 0.1);
+    color: #4a90e2;
+}
+
+.sample-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.sample-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #4a90e2;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    background: rgba(74, 144, 226, 0.1);
+    border-radius: 8px;
+    border: 1px solid rgba(74, 144, 226, 0.3);
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.sample-link:hover {
+    background: rgba(74, 144, 226, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2);
+}
+
+.sample-data-preview {
+    background: rgba(74, 144, 226, 0.1);
+    border: 1px solid rgba(74, 144, 226, 0.3);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 0.5rem;
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    color: #e6e6e6;
+}
+
+.quote-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    backdrop-filter: blur(10px);
+}
+
+.quote-popup-content {
+    background: rgba(6, 17, 34, 0.95);
+    border: 1px solid rgba(74, 144, 226, 0.3);
+    border-radius: 16px;
+    padding: 2rem;
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    backdrop-filter: blur(20px);
+}
+
+.quote-popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(74, 144, 226, 0.2);
+}
+
+.quote-popup-close {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.quote-popup-close:hover {
+    background: rgba(255, 0, 0, 0.2);
+    color: #ff4444;
+}
+
+.quote-text-area {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(74, 144, 226, 0.3);
+    border-radius: 8px;
+    padding: 1rem;
+    color: #fff;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    width: 100%;
+    min-height: 300px;
+    resize: vertical;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.quote-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.btn-copy-quote {
+    background: linear-gradient(135deg, #4a90e2, #8a2be2);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-copy-quote:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(74, 144, 226, 0.3);
+}
+
+@media (max-width: 1024px) {
+    .mobile-menu-toggle {
+        display: block;
+    }
+    
+    .nav-menu-cosmic {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: rgba(0, 6, 17, 0.95);
+        backdrop-filter: blur(20px);
+        flex-direction: column;
+        padding: 2rem;
+        border-top: 1px solid rgba(74, 144, 226, 0.3);
+    }
+    
+    .nav-menu-cosmic.active {
+        display: flex;
+    }
+}
+
+@media (max-width: 768px) {
+    .quote-popup-content {
+        padding: 1.5rem;
+        margin: 1rem;
+    }
+    
+    .quote-text-area {
+        font-size: 0.8rem;
+        min-height: 250px;
+    }
+    
+    .quote-actions {
+        flex-direction: column;
+    }
+    
+    .btn-copy-quote {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .sample-links {
+        gap: 0.5rem;
+    }
+    
+    .sample-link {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.8rem;
+    }
+}
 `;
 
 const style = document.createElement('style');
 style.textContent = additionalCSS;
 document.head.appendChild(style);
+
+function initMobileMenu() {
+    const mobileToggle = document.querySelector('.mobile-menu-toggle');
+    const navMenu = document.querySelector('.nav-menu-cosmic');
+    
+    if (mobileToggle && navMenu) {
+        mobileToggle.addEventListener('click', function() {
+            navMenu.classList.toggle('active');
+            const icon = this.querySelector('i');
+            if (navMenu.classList.contains('active')) {
+                icon.className = 'fas fa-times';
+            } else {
+                icon.className = 'fas fa-bars';
+            }
+        });
+        
+        // Close menu when clicking on a link
+        const navLinks = navMenu.querySelectorAll('.nav-link-cosmic');
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                navMenu.classList.remove('active');
+                mobileToggle.querySelector('i').className = 'fas fa-bars';
+            });
+        });
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!mobileToggle.contains(e.target) && !navMenu.contains(e.target)) {
+                navMenu.classList.remove('active');
+                mobileToggle.querySelector('i').className = 'fas fa-bars';
+            }
+        });
+    }
+}
+
+function initFormatDropdown() {
+    const dropdownToggle = document.getElementById('formatDropdownToggle');
+    const dropdownContent = document.getElementById('formatDropdownContent');
+    const dropdownText = dropdownToggle.querySelector('.dropdown-text');
+    
+    if (!dropdownToggle || !dropdownContent) return;
+    
+    // Make dropdown toggle focusable and keyboard accessible
+    dropdownToggle.setAttribute('tabindex', '0');
+    
+    // Toggle dropdown visibility
+    function toggleDropdown(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const isActive = dropdownContent.classList.contains('active');
+        dropdownContent.classList.toggle('active');
+        dropdownToggle.classList.toggle('active');
+        dropdownToggle.setAttribute('aria-expanded', !isActive);
+    }
+    
+    dropdownToggle.addEventListener('click', toggleDropdown);
+    
+    // Handle keyboard events
+    dropdownToggle.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            toggleDropdown(e);
+        } else if (e.key === 'Escape') {
+            dropdownContent.classList.remove('active');
+            dropdownToggle.classList.remove('active');
+            dropdownToggle.setAttribute('aria-expanded', 'false');
+        }
+    });
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!dropdownToggle.contains(e.target) && !dropdownContent.contains(e.target)) {
+            dropdownContent.classList.remove('active');
+            dropdownToggle.classList.remove('active');
+            dropdownToggle.setAttribute('aria-expanded', 'false');
+        }
+    });
+    
+    // Update dropdown text based on selected checkboxes
+    function updateDropdownText() {
+        const checkedBoxes = dropdownContent.querySelectorAll('input[type="checkbox"]:checked');
+        if (checkedBoxes.length === 0) {
+            dropdownText.textContent = 'Click to select formats';
+        } else if (checkedBoxes.length === 1) {
+            const labelText = checkedBoxes[0].nextElementSibling.textContent;
+            dropdownText.textContent = labelText.length > 30 ? labelText.substring(0, 30) + '...' : labelText;
+        } else {
+            dropdownText.textContent = `${checkedBoxes.length} formats selected`;
+        }
+    }
+    
+    // Add event listeners to checkboxes
+    const checkboxes = dropdownContent.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function(e) {
+            e.stopPropagation();
+            updateDropdownText();
+            if (typeof calculatePricing === 'function') {
+                calculatePricing(); // Trigger price recalculation
+            }
+        });
+    });
+    
+    // Initialize dropdown text
+    updateDropdownText();
+}

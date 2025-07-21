@@ -36,6 +36,9 @@
                 </div>
                 SRAC Analysis Service
             </div>
+            <div class="mobile-menu-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
             <ul class="nav-menu-cosmic">
                 <li><a href="index.html" class="nav-link-cosmic">Home</a></li>
                 <li><a href="capabilities.html" class="nav-link-cosmic">Capabilities</a></li>
@@ -73,33 +76,35 @@
                     <div class="tier-header">
                         <h3>Normal Analysis</h3>
                         <div class="tier-price">₹180-₹250</div>
-                        <div class="tier-time">Deliberately delivered after 2 Days (to provide leverage for Express)</div>
+                        <div class="tier-time">20-100 Students Maximum | Delivered after 2 Days</div>
                     </div>
                     <div class="tier-features">
                         <ul>
+                            <li><i class="fas fa-users"></i> 20-100 Students (Capped)</li>
                             <li><i class="fas fa-check"></i> Complete Performance Analysis</li>
                             <li><i class="fas fa-check"></i> Subject-wise Breakdown</li>
                             <li><i class="fas fa-check"></i> Formatted Report</li>
                             <li><i class="fas fa-check"></i> Grade Predictions</li>
-                            <li><i class="fas fa-check"></i> Fail Count Analysis</li>
+                            <li><i class="fas fa-shield-alt"></i> Anti-Fraud Protection</li>
                         </ul>
                     </div>
                 </div>
 
                 <div class="tier-card" data-tier="express">
-                    <div class="featured-badge">Most Popular</div>
+                    <div class="featured-badge">Premium Service</div>
                     <div class="tier-header">
                         <h3>Express Analysis</h3>
                         <div class="tier-price">₹750</div>
-                        <div class="tier-time">Ultra Priority - delivered within 15 Minutes</div>
+                        <div class="tier-time">Unlimited Students | Delivered within 15 Minutes</div>
                     </div>
                     <div class="tier-features">
                         <ul>
+                            <li><i class="fas fa-infinity"></i> Unlimited Students</li>
+                            <li><i class="fas fa-bolt"></i> 15 Minutes Delivery</li>
                             <li><i class="fas fa-check"></i> Everything in Normal</li>
-                            <li><i class="fas fa-check"></i> Priority Processing</li>
-                            <li><i class="fas fa-check"></i> Instant Generation</li>
-                            <li><i class="fas fa-check"></i> Advanced Insights</li>
-                            <li><i class="fas fa-check"></i> Direct Consultation</li>
+                            <li><i class="fas fa-star"></i> Priority Processing</li>
+                            <li><i class="fas fa-headset"></i> Direct Consultation</li>
+                            <li><i class="fas fa-crown"></i> Premium Service</li>
                         </ul>
                     </div>
                 </div>
@@ -139,8 +144,8 @@
                                 Analysis Type
                             </label>
                             <select id="analysisType" required>
-                                <option value="normal">Normal Analysis (Generated instantly, delivered within 2 Days) - ₹180-₹250</option>
-                                <option value="express">Express Analysis (Generated instantly, delivered within 15 Minutes) - ₹750</option>
+                                <option value="normal">Normal Analysis (20-100 Students, Delivered in 2 Days) - ₹180-₹250</option>
+                                <option value="express">Express Analysis (Unlimited Students, Delivered in 15 Minutes) - ₹750</option>
                             </select>
                         </div>
 
@@ -149,45 +154,50 @@
                                 <i class="fas fa-users"></i>
                                 Number of Students (Per Section)
                             </label>
-                                                        <input type="number" id="studentCount" max="10000" value="20" required>
-                            <small class="input-note">Minimum 20 students required. Pricing: ₹x × total students = final amount</small>
+                            <input type="number" id="studentCount" min="20" max="10000" value="20" required>
+                            <small class="input-note">
+                                <strong>Normal Analysis:</strong> 20-100 students maximum (₹180-₹250)<br>
+                                <strong>Express Analysis:</strong> Unlimited students (₹750 flat rate)
+                            </small>
                             <div class="section-warning">
-                                <i class="fas fa-exclamation-triangle"></i>
-                                <strong>Important:</strong> Minimum 20 students required per quote. This quote is valid for ONE SECTION only. 
-                                Multiple sections require separate quotes and payments as each section 
-                                gets its own individual report output.
+                                <i class="fas fa-shield-alt"></i>
+                                <strong>Anti-Fraud Protection:</strong> Student limits prevent misuse and ensure fair pricing. 
+                                Normal Analysis is capped at 100 students to prevent fake receipt generation. 
+                                For larger batches, use Express Analysis with unlimited student capacity.
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label>
+                            <label for="formatDropdown">
                                 <i class="fas fa-file-alt"></i>
                                 Report Format (Select multiple formats)
                             </label>
-                            <div class="checkbox-group">
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="format_excel" value="excel" checked>
-                                    <label for="format_excel">Excel Analysis Report - Free</label>
+                            <div class="format-dropdown">
+                                <div class="dropdown-toggle" id="formatDropdownToggle" role="button" aria-expanded="false" aria-haspopup="true" aria-labelledby="formatDropdown">
+                                    <span class="dropdown-text">Click to select formats</span>
+                                    <i class="fas fa-chevron-down dropdown-arrow"></i>
                                 </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="format_combined" value="combined">
-                                    <label for="format_combined">Combined PDF (All Students) - Free</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="format_subject" value="subject">
-                                    <label for="format_subject">Subject-Specific Analysis - Free</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="format_word" value="word">
-                                    <label for="format_word">Word Document Format - Free</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="format_detailed" value="detailed">
-                                    <label for="format_detailed">Detailed Report (+₹10)</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="format_presentation" value="presentation">
-                                    <label for="format_presentation">Graph-compatible Excel (Upload Excel in web UI to generate detailed graphs ...) (+₹30)</label>
+                                <div class="dropdown-content" id="formatDropdownContent" role="menu">
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="format_excel" name="reportFormat[]" value="excel" checked>
+                                        <label for="format_excel">Excel Analysis Report - Free</label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="format_combined" name="reportFormat[]" value="combined">
+                                        <label for="format_combined">Combined PDF (All Students) - Free</label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="format_subject" name="reportFormat[]" value="subject">
+                                        <label for="format_subject">Subject-Specific Analysis - Free</label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="format_word" name="reportFormat[]" value="word">
+                                        <label for="format_word">Word Document Format - Free</label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="format_presentation" name="reportFormat[]" value="presentation">
+                                        <label for="format_presentation">Graph-compatible Excel (Upload Excel in web UI to generate detailed graphs ...) (+₹20)</label>
+                                    </div>
                                 </div>
                             </div>
                             <small class="input-note">Select one or more report formats. Free formats have no additional cost.</small>
@@ -412,10 +422,10 @@
                             <div class="format-details">
                                 <p><strong>Required Columns:</strong></p>
                                 <ul>
-                                    <li>USN (University Seat Number) containing Excel</li>
+                                    <li>USN (University Seat Number), Subject Marks, Semester, CGPA, etc. as per your institution's format.</li>
                                 </ul>
                                 <div class="format-example">
-                                    <strong>Example:</strong> USN | Data1 | Data2 | Data3 | ...
+                                    <strong>Example:</strong> USN 
                                 </div>
                             </div>
                         </div>
@@ -567,10 +577,21 @@
 
                 <div class="policy-card">
                     <div class="policy-icon">
-                        <i class="fas fa-file-check"></i>
+                        <i class="fas fa-file-download"></i>
                     </div>
-                    <h3>Correct Format Mandatory</h3>
-                    <p>Data files must follow SRAC's required structure. Format check available for ₹100.</p>
+                    <h3>Sample Documents</h3>
+                    <p>Download sample input and output files to understand the required format.</p>
+                    <div class="sample-links-compact">
+                        <a href="samples/input-sample.xlsx" class="sample-link-compact" target="_blank">
+                            <i class="fas fa-download"></i> Sample Input
+                        </a>
+                        <a href="samples/output-sample.pdf" class="sample-link-compact" target="_blank">
+                            <i class="fas fa-download"></i> Sample Output
+                        </a>
+                        <a href="samples/format-guide.pdf" class="sample-link-compact" target="_blank">
+                            <i class="fas fa-file-alt"></i> Format Guide
+                        </a>
+                    </div>
                 </div>
 
                 <div class="policy-card">
