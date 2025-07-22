@@ -267,6 +267,12 @@ function calculateDetailedPricing(data) {
             case 'presentation':
                 formatFee += 20;
                 break;
+            case 'rv_tracking':
+                formatFee += 50;
+                break;
+            case 'smart_monitoring':
+                formatFee += 75;
+                break;
             case 'digital':
             case 'excel':
             case 'combined':
@@ -555,7 +561,87 @@ function generateQuoteId() {
 }
 
 function generateQuoteTextSummary(quoteData) {
-    // Create a detailed text summary
+    // Show options for quote generation
+    showQuoteGenerationOptions(quoteData);
+}
+
+function showQuoteGenerationOptions(quoteData) {
+    // Directly generate image quote without showing options
+    createQuoteImage(quoteData);
+}
+
+function generateImageQuote(quoteDataStr) {
+    const quoteData = JSON.parse(quoteDataStr.replace(/&quot;/g, '"'));
+    closeQuoteOptions();
+    createQuoteImage(quoteData);
+}
+
+function generateTextQuote(quoteDataStr) {
+    const quoteData = JSON.parse(quoteDataStr.replace(/&quot;/g, '"'));
+    closeQuoteOptions();
+    generateTextQuoteFormat(quoteData);
+}
+
+function generateBothFormats(quoteDataStr) {
+    const quoteData = JSON.parse(quoteDataStr.replace(/&quot;/g, '"'));
+    closeQuoteOptions();
+    generateBothQuoteFormats(quoteData);
+}
+
+function createQuoteImage(quoteData) {
+    // Create canvas for quote image
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Set canvas size for high quality
+    canvas.width = 1200;
+    canvas.height = 1600;
+    
+    // Create cosmic background
+    createCosmicBackground(ctx, canvas.width, canvas.height);
+    
+    // Add quote content
+    addQuoteContent(ctx, quoteData, canvas.width, canvas.height);
+    
+    // Show the generated image with download option
+    showImageQuoteResult(canvas, quoteData);
+}
+
+function createCosmicBackground(ctx, width, height) {
+    // Create gradient background
+    const gradient = ctx.createRadialGradient(width/2, height/2, 0, width/2, height/2, Math.max(width, height)/2);
+    gradient.addColorStop(0, '#001122');
+    gradient.addColorStop(0.4, '#000611');
+    gradient.addColorStop(1, '#000000');
+    
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, width, height);
+    
+    // Add stars
+    ctx.fillStyle = '#ffffff';
+    for (let i = 0; i < 200; i++) {
+        const x = Math.random() * width;
+        const y = Math.random() * height;
+        const size = Math.random() * 2;
+        ctx.beginPath();
+        ctx.arc(x, y, size, 0, Math.PI * 2);
+        ctx.fill();
+    }
+    
+    // Add colored particles
+    const colors = ['#4a90e2', '#8a2be2', '#ffd700'];
+    for (let i = 0; i < 50; i++) {
+        const x = Math.random() * width;
+        const y = Math.random() * height;
+        const size = Math.random() * 3 + 1;
+        ctx.fillStyle = colors[Math.floor(Math.random() * colors.length)] + '80';
+        ctx.beginPath();
+        ctx.arc(x, y, size, 0, Math.PI * 2);
+        ctx.fill();
+    }
+}
+
+function addQuoteContent(ctx, quoteData, width, height) {
     const formatsList = Array.isArray(quoteData.reportFormat) ? 
         quoteData.reportFormat.map(f => {
             const formatNames = {
@@ -563,7 +649,276 @@ function generateQuoteTextSummary(quoteData) {
                 'combined': 'Combined PDF (All Students) - Free',
                 'subject': 'Subject-Specific Analysis - Free',
                 'word': 'Word Document Format - Free',
-                'presentation': 'Graph-compatible Excel (Upload Excel in web UI to generate detailed graphs) (+₹20)'
+                'presentation': 'Graph-compatible Excel (+₹20)',
+                'rv_tracking': 'RV Results Auto-Update (+₹50)',
+                'smart_monitoring': 'Smart AI Monitoring (+₹75)'
+            };
+            return formatNames[f] || f;
+        }).join(', ') : 'Excel Analysis Report';
+
+    const institutionName = quoteData.institution === 'acs' ? 'ACS College' : 
+                           quoteData.institution === 'rrc' ? 'RRC Institute' : 'Unknown';
+
+    const analysisTypeLabel = quoteData.analysisType === 'normal' ? 'Normal Analysis' : 
+                             quoteData.analysisType === 'express' ? 'Express Analysis' : 'Analysis';
+    
+    let yPos = 60;
+    
+    // Header with logo effect
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 48px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('SRAC ANALYSIS SERVICE', width/2, yPos);
+    yPos += 40;
+    
+    ctx.font = 'bold 28px Arial';
+    ctx.fillStyle = '#4a90e2';
+    ctx.fillText('PRICE ESTIMATION QUOTE', width/2, yPos);
+    yPos += 80;
+    
+    // Quote details section
+    ctx.textAlign = 'left';
+    ctx.font = 'bold 24px Arial';
+    ctx.fillStyle = '#ffd700';
+    ctx.fillText('📋 QUOTE DETAILS', 80, yPos);
+    yPos += 40;
+    
+    ctx.font = '20px Arial';
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText(`Quote ID: ${quoteData.quoteId}`, 100, yPos);
+    yPos += 30;
+    ctx.fillText(`Generated: ${quoteData.generatedDate}`, 100, yPos);
+    yPos += 30;
+    ctx.fillText(`Valid Until: ${quoteData.validUntil}`, 100, yPos);
+    yPos += 60;
+    
+    // Client information
+    ctx.font = 'bold 24px Arial';
+    ctx.fillStyle = '#ffd700';
+    ctx.fillText('👤 CLIENT INFORMATION', 80, yPos);
+    yPos += 40;
+    
+    ctx.font = '20px Arial';
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText(`Name: ${quoteData.contactName}`, 100, yPos);
+    yPos += 30;
+    ctx.fillText(`Email: ${quoteData.contactEmail}`, 100, yPos);
+    yPos += 30;
+    ctx.fillText(`Institution: ${institutionName}`, 100, yPos);
+    yPos += 60;
+    
+    // Service details
+    ctx.font = 'bold 24px Arial';
+    ctx.fillStyle = '#ffd700';
+    ctx.fillText('📊 SERVICE DETAILS', 80, yPos);
+    yPos += 40;
+    
+    ctx.font = '20px Arial';
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText(`Analysis Type: ${analysisTypeLabel}`, 100, yPos);
+    yPos += 30;
+    ctx.fillText(`Number of Students: ${quoteData.studentCount}`, 100, yPos);
+    yPos += 30;
+    
+    // Handle long format list
+    const maxLineLength = 80;
+    const formatLines = wrapText(ctx, `Report Formats: ${formatsList}`, maxLineLength);
+    formatLines.forEach(line => {
+        ctx.fillText(line, 100, yPos);
+        yPos += 30;
+    });
+    yPos += 30;
+    
+    // Pricing breakdown
+    ctx.font = 'bold 24px Arial';
+    ctx.fillStyle = '#ffd700';
+    ctx.fillText('💰 PRICING BREAKDOWN', 80, yPos);
+    yPos += 40;
+    
+    ctx.font = '20px Arial';
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText(`Per Student Rate: ₹${quoteData.perStudentRate}`, 100, yPos);
+    yPos += 30;
+    ctx.fillText(`Base Cost (${quoteData.studentCount} students): ₹${quoteData.studentCost}`, 100, yPos);
+    yPos += 30;
+    ctx.fillText(`Format Fees: ₹${quoteData.formatFee}`, 100, yPos);
+    yPos += 40;
+    
+    // Total amount highlight
+    ctx.fillStyle = '#4a90e2';
+    ctx.fillRect(80, yPos - 30, width - 160, 50);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 28px Arial';
+    ctx.fillText(`TOTAL AMOUNT: ₹${quoteData.total}`, 100, yPos);
+    yPos += 80;
+    
+    // Future-ready features
+    if (quoteData.reportFormat.includes('rv_tracking') || quoteData.reportFormat.includes('smart_monitoring')) {
+        ctx.font = 'bold 24px Arial';
+        ctx.fillStyle = '#ffd700';
+        ctx.fillText('🔮 FUTURE-READY FEATURES', 80, yPos);
+        yPos += 40;
+        
+        ctx.font = '18px Arial';
+        ctx.fillStyle = '#ffffff';
+        
+        if (quoteData.reportFormat.includes('rv_tracking')) {
+            ctx.fillText('✅ RV Results Auto-Update - Automatic monitoring', 100, yPos);
+            yPos += 25;
+        }
+        
+        if (quoteData.reportFormat.includes('smart_monitoring')) {
+            ctx.fillText('✅ Smart AI Monitoring - Lifetime result tracking', 100, yPos);
+            yPos += 25;
+        }
+        yPos += 30;
+    }
+    
+    // Contact info
+    ctx.font = 'bold 24px Arial';
+    ctx.fillStyle = '#ffd700';
+    ctx.fillText('📍 CONTACT', 80, yPos);
+    yPos += 40;
+    
+    ctx.font = '18px Arial';
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText('Location: CSE Department, Final Year Block', 100, yPos);
+    yPos += 25;
+    ctx.fillText('Room No. 103, Section C', 100, yPos);
+    yPos += 25;
+    ctx.fillText('Ask for: "Tanishq" (SRAC Analysis Service)', 100, yPos);
+    yPos += 50;
+    
+    // Footer note
+    ctx.font = 'italic 16px Arial';
+    ctx.fillStyle = '#9ca3af';
+    ctx.textAlign = 'center';
+    ctx.fillText('This is a price estimation, not a final invoice.', width/2, height - 60);
+    ctx.fillText('For official quotation and service booking, please contact directly.', width/2, height - 30);
+}
+
+function wrapText(ctx, text, maxWidth) {
+    const words = text.split(' ');
+    const lines = [];
+    let currentLine = words[0];
+    
+    for (let i = 1; i < words.length; i++) {
+        const word = words[i];
+        const width = ctx.measureText(currentLine + ' ' + word).width;
+        if (width < maxWidth * 10) { // Approximate character limit
+            currentLine += ' ' + word;
+        } else {
+            lines.push(currentLine);
+            currentLine = word;
+        }
+    }
+    lines.push(currentLine);
+    return lines;
+}
+
+function showImageQuoteResult(canvas, quoteData) {
+    const imageDataUrl = canvas.toDataURL('image/png', 1.0);
+    
+    const resultHTML = `
+        <div class="image-quote-popup" id="imageQuotePopup">
+            <div class="image-quote-content">
+                <div class="image-quote-header">
+                    <h3><i class="fas fa-image"></i> Your Professional Quote Image</h3>
+                    <button class="quote-popup-close" onclick="closeImageQuote()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="image-quote-body">
+                    <div class="image-preview">
+                        <img src="${imageDataUrl}" alt="SRAC Quote" class="quote-image-preview">
+                    </div>
+                    <div class="image-actions">
+                        <button class="btn-download-image" onclick="downloadQuoteImage('${imageDataUrl}', '${quoteData.quoteId}')">
+                            <i class="fas fa-download"></i> Download Image
+                        </button>
+                        <button class="btn-share-whatsapp" onclick="shareViaWhatsApp('${imageDataUrl}')">
+                            <i class="fab fa-whatsapp"></i> Share via WhatsApp
+                        </button>
+                        <button class="btn-copy-image" onclick="copyImageToClipboard('${imageDataUrl}')">
+                            <i class="fas fa-copy"></i> Copy to Clipboard
+                        </button>
+                    </div>
+                    <div class="sharing-tips">
+                        <h4><i class="fas fa-lightbulb"></i> Sharing Tips:</h4>
+                        <ul>
+                            <li>Download the image and attach it to your email or message</li>
+                            <li>Share directly via WhatsApp for instant communication</li>
+                            <li>Copy to clipboard for quick pasting in other applications</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', resultHTML);
+}
+
+function downloadQuoteImage(imageDataUrl, quoteId) {
+    const link = document.createElement('a');
+    link.download = `SRAC_Quote_${quoteId}.png`;
+    link.href = imageDataUrl;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    // Show success message
+    showNotification('Quote image downloaded successfully!', 'success');
+}
+
+function shareViaWhatsApp(imageDataUrl) {
+    // Convert to blob and create a file
+    fetch(imageDataUrl)
+        .then(res => res.blob())
+        .then(blob => {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'SRAC Analysis Service Quote',
+                    text: 'Here is my SRAC analysis service quote',
+                    files: [new File([blob], 'srac_quote.png', { type: 'image/png' })]
+                });
+            } else {
+                // Fallback - open WhatsApp web with text
+                const message = encodeURIComponent('Here is my SRAC analysis service quote. Please check the attached image.');
+                window.open(`https://wa.me/?text=${message}`, '_blank');
+                showNotification('Please attach the downloaded image to your WhatsApp message', 'info');
+            }
+        });
+}
+
+function copyImageToClipboard(imageDataUrl) {
+    fetch(imageDataUrl)
+        .then(res => res.blob())
+        .then(blob => {
+            const item = new ClipboardItem({ 'image/png': blob });
+            navigator.clipboard.write([item]).then(() => {
+                showNotification('Quote image copied to clipboard!', 'success');
+            }).catch(() => {
+                showNotification('Could not copy image. Please download and share manually.', 'warning');
+            });
+        })
+        .catch(() => {
+            showNotification('Could not copy image. Please download and share manually.', 'warning');
+        });
+}
+
+function generateTextQuoteFormat(quoteData) {
+    // Generate the traditional text format
+    const formatsList = Array.isArray(quoteData.reportFormat) ? 
+        quoteData.reportFormat.map(f => {
+            const formatNames = {
+                'excel': 'Excel Analysis Report - Free', 
+                'combined': 'Combined PDF (All Students) - Free',
+                'subject': 'Subject-Specific Analysis - Free',
+                'word': 'Word Document Format - Free',
+                'presentation': 'Graph-compatible Excel (Upload Excel in web UI to generate detailed graphs) (+₹20)',
+                'rv_tracking': 'RV Results Auto-Update Service (+₹50)',
+                'smart_monitoring': 'Smart Result Monitoring (AI-Powered) (+₹75)'
             };
             return formatNames[f] || f;
         }).join(', ') : 'Excel Analysis Report';
@@ -603,6 +958,133 @@ function generateQuoteTextSummary(quoteData) {
 
 ⏰ DELIVERY: ${quoteData.deliveryTime}
 
+🔮 FUTURE-READY FEATURES:
+   ${quoteData.reportFormat.includes('rv_tracking') ? '✅ RV Results Auto-Update - Automatic monitoring for revaluation results' : '❌ RV Results Auto-Update - Not selected'}
+   ${quoteData.reportFormat.includes('smart_monitoring') ? '✅ Smart AI Monitoring - Lifetime result tracking with AI-powered updates' : '❌ Smart AI Monitoring - Not selected'}
+   
+   💡 Premium Features Benefit: Never worry about result updates again! 
+   Our AI system continuously monitors university portals and automatically 
+   recalculates your analysis when RV or supplementary results are announced.
+
+📋 IMPORTANT POLICIES:
+   • Payment required in advance before work begins
+   • Data must be in correct SRAC format
+   • Each analysis run counts as new request
+   • Reports delivered via email as PDF attachments
+   • Available only for ACS College and RRC Institute
+
+⚠️  SECTION LIMITATION:
+   This quote is valid for ONE SECTION ONLY. Multiple sections 
+   require separate quotes and payments. Each section will have 
+   its own individual report output.
+
+📍 CONTACT:
+   Location: CSE Department, Final Year Block
+   Room No. 103, Section C
+   Ask for: "Tanishq" (SRAC Analysis Service)
+
+═══════════════════════════════════════════════════════════════
+NOTE: This is a price estimation, not a final invoice.
+For official quotation and service booking, please contact directly.
+═══════════════════════════════════════════════════════════════`;
+
+    // Show text quote popup
+    showQuotePopup(quoteSummary, quoteData);
+}
+
+function generateBothQuoteFormats(quoteData) {
+    // Generate both formats
+    generateTextQuoteFormat(quoteData);
+    
+    // Also create the image after a small delay
+    setTimeout(() => {
+        createQuoteImage(quoteData);
+    }, 500);
+    
+    showNotification('Generated both text and image formats for you!', 'success');
+}
+
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>
+        ${message}
+    `;
+    
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? '#10b981' : type === 'warning' ? '#f59e0b' : '#3b82f6'};
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        z-index: 10001;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+        animation: slideInRight 0.3s ease-out;
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'slideOutRight 0.3s ease-in forwards';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+// Global close functions
+window.closeQuoteOptions = function() {
+    const popup = document.getElementById('quoteOptionsPopup');
+    if (popup) popup.remove();
+};
+
+window.closeImageQuote = function() {
+    const popup = document.getElementById('imageQuotePopup');
+    if (popup) popup.remove();
+};
+
+    const quoteSummary = `╔══════════════════════════════════════════════════════════════╗
+║                    SRAC ANALYSIS SERVICE                     ║
+║                   PRICE ESTIMATION QUOTE                     ║
+╚══════════════════════════════════════════════════════════════╝
+
+📋 QUOTE DETAILS:
+   Quote ID: ${quoteData.quoteId}
+   Generated: ${quoteData.generatedDate}
+   Valid Until: ${quoteData.validUntil}
+
+👤 CLIENT INFORMATION:
+   Name: ${quoteData.contactName}
+   Email: ${quoteData.contactEmail}
+   Institution: ${institutionName}
+
+📊 SERVICE DETAILS:
+   Analysis Type: ${analysisTypeLabel}
+   Number of Students: ${quoteData.studentCount}
+   Report Formats: ${formatsList}
+
+💰 PRICING BREAKDOWN:
+   Per Student Rate: ₹${quoteData.perStudentRate}
+   Base Cost (${quoteData.studentCount} students): ₹${quoteData.studentCost}
+   Format Fees: ₹${quoteData.formatFee}
+   ────────────────────────────────────
+   TOTAL AMOUNT: ₹${quoteData.total}
+
+⏰ DELIVERY: ${quoteData.deliveryTime}
+
+🔮 FUTURE-READY FEATURES:
+   ${quoteData.reportFormat.includes('rv_tracking') ? '✅ RV Results Auto-Update - Automatic monitoring for revaluation results' : '❌ RV Results Auto-Update - Not selected'}
+   ${quoteData.reportFormat.includes('smart_monitoring') ? '✅ Smart AI Monitoring - Lifetime result tracking with AI-powered updates' : '❌ Smart AI Monitoring - Not selected'}
+   
+   💡 Premium Features Benefit: Never worry about result updates again! 
+   Our AI system continuously monitors university portals and automatically 
+   recalculates your analysis when RV or supplementary results are announced.
+
 📋 IMPORTANT POLICIES:
    • Payment required in advance before work begins
    • Data must be in correct SRAC format
@@ -627,7 +1109,7 @@ For official quotation and service booking, please contact directly.
 
     // Show popup instead of downloading
     showQuotePopup(quoteSummary, quoteData);
-}
+
 
 function showQuotePopup(quoteSummary, quoteData) {
     // Create the popup HTML
@@ -1125,6 +1607,18 @@ function initFormatDropdown() {
         dropdownContent.classList.toggle('active');
         dropdownToggle.classList.toggle('active');
         dropdownToggle.setAttribute('aria-expanded', !isActive);
+        
+        // Add special effects when opening
+        if (!isActive) {
+            dropdownContent.style.transform = 'translateY(-10px)';
+            dropdownContent.style.opacity = '0';
+            
+            setTimeout(() => {
+                dropdownContent.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+                dropdownContent.style.transform = 'translateY(0)';
+                dropdownContent.style.opacity = '1';
+            }, 10);
+        }
     }
     
     dropdownToggle.addEventListener('click', toggleDropdown);
@@ -1139,6 +1633,68 @@ function initFormatDropdown() {
             dropdownToggle.setAttribute('aria-expanded', 'false');
         }
     });
+    
+    // Enhanced premium feature interactions
+    const premiumFeatures = document.querySelectorAll('.premium-feature');
+    premiumFeatures.forEach(feature => {
+        feature.addEventListener('mouseenter', function() {
+            // Add sparkle effect
+            createSparkleEffect(this);
+        });
+        
+        feature.addEventListener('click', function() {
+            // Add click ripple effect
+            createRippleEffect(this, event);
+        });
+    });
+    
+    function createSparkleEffect(element) {
+        const sparkle = document.createElement('div');
+        sparkle.className = 'sparkle-effect';
+        sparkle.style.cssText = `
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #ffd700;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: sparkleAnim 1s ease-out forwards;
+        `;
+        
+        for (let i = 0; i < 5; i++) {
+            const clone = sparkle.cloneNode();
+            clone.style.left = Math.random() * 100 + '%';
+            clone.style.top = Math.random() * 100 + '%';
+            clone.style.animationDelay = Math.random() * 0.5 + 's';
+            element.appendChild(clone);
+            
+            setTimeout(() => clone.remove(), 1000);
+        }
+    }
+    
+    function createRippleEffect(element, event) {
+        const ripple = document.createElement('div');
+        const rect = element.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const x = event.clientX - rect.left - size / 2;
+        const y = event.clientY - rect.top - size / 2;
+        
+        ripple.style.cssText = `
+            position: absolute;
+            width: ${size}px;
+            height: ${size}px;
+            left: ${x}px;
+            top: ${y}px;
+            background: rgba(138, 43, 226, 0.3);
+            border-radius: 50%;
+            transform: scale(0);
+            animation: rippleAnim 0.6s ease-out;
+            pointer-events: none;
+        `;
+        
+        element.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 600);
+    }
     
     // Close dropdown when clicking outside
     document.addEventListener('click', function(e) {

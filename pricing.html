@@ -12,17 +12,20 @@
         <canvas id="starfield-canvas" class="starfield-canvas"></canvas>
         <div class="nebula-layer"></div>
         <div class="cosmic-particles"></div>
+        
+        <!-- Simple Earth Animation -->
         <div class="earth-container">
             <div class="earth">
                 <div class="earth-atmosphere"></div>
                 <div class="earth-clouds"></div>
+                <div class="earth-continents">
+                    <div class="continent continent-1"></div>
+                    <div class="continent continent-2"></div>
+                    <div class="continent continent-3"></div>
+                </div>
                 <div class="satellite satellite1"></div>
                 <div class="satellite satellite2"></div>
                 <div class="satellite satellite3"></div>
-                <div class="satellite satellite4"></div>
-                <div class="satellite satellite5"></div>
-                <div class="satellite satellite6"></div>
-                <div class="satellite satellite7"></div>
             </div>
         </div>
     </div>
@@ -198,9 +201,21 @@
                                         <input type="checkbox" id="format_presentation" name="reportFormat[]" value="presentation">
                                         <label for="format_presentation">Graph-compatible Excel (Upload Excel in web UI to generate detailed graphs ...) (+₹20)</label>
                                     </div>
+                                    <div class="checkbox-item premium-feature">
+                                        <input type="checkbox" id="format_smart_monitoring" name="reportFormat[]" value="smart_monitoring">
+                                        <label for="format_smart_monitoring">
+                                            <span class="premium-badge">AI-POWERED</span>
+                                            Smart Result Monitoring (+₹100)
+                                        </label>
+                                        <div class="feature-description">
+                                            <i class="fas fa-brain"></i>
+                                            AI-powered monitoring system that tracks all result updates (Regular + RV + Supplementary) 
+                                            and automatically recalculates analysis without manual intervention. Lifetime monitoring!
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <small class="input-note">Select one or more report formats. Free formats have no additional cost.</small>
+                            <small class="input-note">Select one or more report formats. Premium features include future-proofing services.</small>
                         </div>
 
                         <div class="form-group">
