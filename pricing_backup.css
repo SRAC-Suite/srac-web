@@ -1,0 +1,165 @@
+*{margin:0;padding:0;box-sizing:border-box;}body{font-family:'SF Pro Display','SF Pro Text',system-ui,-apple-system,sans-serif;line-height:1.6;color:#fff;background:#000;overflow-x:hidden;}.pricing-page{min-height:100vh;position:relative;}.cosmic-background{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-10;background:radial-gradient(circle at 50% 50%,#001122 0%,#000611 40%,#000 100%);}.starfield-canvas{position:absolute;top:0;left:0;width:100%;height:100%;z-index:-9;}
+
+/* === Simple Earth Animation === */
+.earth-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    height: 300px;
+    z-index: -5;
+}
+
+.earth {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%,
+        #4fc3f7 0%,
+        #2196f3 20%,
+        #1976d2 40%,
+        #0d47a1 60%,
+        #01579b 80%,
+        #000051 100%);
+    position: relative;
+    animation: earthRotate 120s linear infinite;
+    box-shadow: 
+        0 0 80px rgba(33, 150, 243, 0.8),
+        inset -40px -40px 100px rgba(0, 0, 0, 0.8),
+        0 0 120px rgba(79, 195, 247, 0.5);
+    border: 3px solid rgba(33, 150, 243, 0.6);
+}
+
+.earth-continents {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+
+.continent {
+    position: absolute;
+    background: linear-gradient(45deg, #2e7d32, #388e3c);
+    border-radius: 60% 40% 70% 30%;
+    box-shadow: 
+        2px 2px 0 #1b5e20,
+        inset 1px 1px 3px rgba(255, 255, 255, 0.2);
+}
+
+.continent-1 {
+    top: 15%;
+    left: 25%;
+    width: 18%;
+    height: 12%;
+    transform: rotate(-15deg);
+}
+
+.continent-2 {
+    bottom: 25%;
+    right: 20%;
+    width: 22%;
+    height: 16%;
+    transform: rotate(25deg);
+}
+
+.continent-3 {
+    top: 50%;
+    left: 10%;
+    width: 15%;
+    height: 10%;
+    transform: rotate(45deg);
+}
+
+.earth-clouds {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: 
+        radial-gradient(ellipse 40% 20% at 20% 30%, rgba(255, 255, 255, 0.3) 0%, transparent 50%),
+        radial-gradient(ellipse 30% 15% at 70% 60%, rgba(255, 255, 255, 0.25) 0%, transparent 50%),
+        radial-gradient(ellipse 25% 12% at 45% 80%, rgba(255, 255, 255, 0.2) 0%, transparent 50%);
+    animation: cloudDrift 60s linear infinite;
+}
+
+.earth-atmosphere {
+    position: absolute;
+    top: -10%;
+    left: -10%;
+    width: 120%;
+    height: 120%;
+    border-radius: 50%;
+    background: radial-gradient(circle,
+        transparent 60%,
+        rgba(79, 195, 247, 0.15) 65%,
+        rgba(33, 150, 243, 0.25) 75%,
+        rgba(13, 71, 161, 0.4) 85%,
+        transparent 100%);
+    animation: atmosphereGlow 8s ease-in-out infinite alternate;
+}
+
+/* Satellites around Earth */
+.satellite {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: linear-gradient(45deg, #ffd700, #ffed4e);
+    border-radius: 50%;
+    box-shadow: 0 0 10px #ffd700;
+}
+
+.satellite1 {
+    top: -15px;
+    left: 50%;
+    animation: satellite1Orbit 12s linear infinite;
+}
+
+.satellite2 {
+    top: 50%;
+    right: -15px;
+    animation: satellite2Orbit 15s linear infinite;
+}
+
+.satellite3 {
+    bottom: -10px;
+    left: 30%;
+    animation: satellite3Orbit 18s linear infinite;
+}
+
+/* === Earth Animations === */
+@keyframes earthRotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes cloudDrift {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes atmosphereGlow {
+    0% { opacity: 0.6; }
+    100% { opacity: 1; }
+}
+
+@keyframes satellite1Orbit {
+    0% { transform: rotate(0deg) translateX(80px) rotate(0deg); }
+    100% { transform: rotate(360deg) translateX(80px) rotate(-360deg); }
+}
+
+@keyframes satellite2Orbit {
+    0% { transform: rotate(0deg) translateX(90px) rotate(0deg); }
+    100% { transform: rotate(360deg) translateX(90px) rotate(-360deg); }
+}
+
+@keyframes satellite3Orbit {
+    0% { transform: rotate(0deg) translateX(85px) rotate(0deg); }
+    100% { transform: rotate(360deg) translateX(85px) rotate(-360deg); }
+}
+
+/* === Application Styles === */
