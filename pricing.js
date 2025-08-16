@@ -1733,3 +1733,19 @@ function initFormatDropdown() {
     // Initialize dropdown text
     updateDropdownText();
 }
+
+// Download functionality
+function downloadSRAC() {
+    window.open('https://github.com/SRAC-Suite/SRAC/releases/download/v1.0.0/SRAC.exe', '_blank');
+}
+
+// Add download button event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    const downloadButtons = document.querySelectorAll('.btn-download, .btn-download-stellar, .btn-download-cosmic, .btn-download-modern');
+    downloadButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            downloadSRAC();
+        });
+    });
+});

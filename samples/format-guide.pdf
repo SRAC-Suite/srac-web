@@ -1,0 +1,26 @@
+SRAC Data Format Guide
+
+This document explains the required format for data submission to SRAC Analysis Service.
+
+Required Columns:
+- Student_Name: Full name of the student
+- Roll_Number: University registration/roll number
+- Mathematics: Marks obtained in Mathematics subject
+- Physics: Marks obtained in Physics subject  
+- Chemistry: Marks obtained in Chemistry subject
+- Computer_Science: Marks obtained in Computer Science subject
+- English: Marks obtained in English subject
+- Semester: Current semester number
+- CGPA: Cumulative Grade Point Average
+
+Example Format:
+Student_Name | Roll_Number | Mathematics | Physics | Chemistry | Computer_Science | English | Semester | CGPA
+John Doe     | 1MS21CS001  | 85         | 78      | 92        | 88              | 75      | 5        | 8.2
+Jane Smith   | 1MS21CS002  | 91         | 83      | 89        | 94              | 82      | 5        | 8.7
+
+Important Notes:
+- All numeric fields should contain valid numbers
+- No empty cells allowed
+- Use standard Excel format (.xlsx)
+- One section per file
+- Minimum 20 students required
