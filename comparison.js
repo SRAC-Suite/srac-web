@@ -797,7 +797,7 @@ function initConstellationAnimation() { const constellation = document.querySele
 
 // Global download function for SRAC
 function downloadSRAC() {
-    window.open('https://github.com/SRAC-Suite/SRAC/releases/download/v1.0.0/SRAC.exe', '_blank');
+    window.location.href = 'download.html';
 }
 
 // Add click handlers for download buttons on page load
