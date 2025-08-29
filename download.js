@@ -7,11 +7,39 @@ document.addEventListener('DOMContentLoaded', function() {
         return mobileKeywords.test(userAgent) || window.innerWidth <= 768;
     }
 
-    // Show mobile warning if on mobile/tablet
+    // Disable heavy animations on mobile
     if (isMobileOrTablet()) {
+        // Add mobile class to body for CSS targeting
+        document.body.classList.add('mobile-device');
+        
+        // Disable complex animations
+        const style = document.createElement('style');
+        style.textContent = `
+            .mobile-device * {
+                animation-duration: 0.3s !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.3s !important;
+            }
+            
+            .mobile-device .galaxy-layer,
+            .mobile-device .stars-field,
+            .mobile-device .cosmic-particles,
+            .mobile-device .nebula-glow {
+                display: none !important;
+            }
+            
+            .mobile-device .terminal-glass::before,
+            .mobile-device .terminal-glass::after,
+            .mobile-device .feature-card::before,
+            .mobile-device .feature-card::after {
+                display: none !important;
+            }
+        `;
+        document.head.appendChild(style);
+        
         setTimeout(() => {
-            showNotification('⚠️ SRAC is designed for Windows PC only. Please use a computer to download and install.', 'warning');
-        }, 2000);
+            showNotification('📱 Optimized for mobile viewing', 'info');
+        }, 1000);
     }
 
     // Smooth scrolling for navigation links
@@ -87,36 +115,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Terminal download animation
     function animateTerminalDownload(button, fileName) {
-        const terminal = button.closest('.download-terminal');
-        const progressFill = terminal.querySelector('.progress-fill');
-        const progressText = terminal.querySelector('.progress-text');
         const originalButtonText = button.innerHTML;
         
         // Start animation
         button.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Initiating...</span>';
         button.style.pointerEvents = 'none';
-        
-        // Progress animation
-        progressFill.style.width = '0%';
-        progressText.textContent = 'Preparing download...';
+        button.style.opacity = '0.8';
         
         setTimeout(() => {
-            progressFill.style.width = '30%';
-            progressText.textContent = 'Connecting to server...';
             button.innerHTML = '<i class="fas fa-download"></i><span>Downloading...</span>';
         }, 500);
         
         setTimeout(() => {
-            progressFill.style.width = '70%';
-            progressText.textContent = 'Downloading ' + fileName;
-        }, 1000);
-        
-        setTimeout(() => {
-            progressFill.style.width = '100%';
-            progressText.textContent = 'Download complete!';
-            button.innerHTML = '<i class="fas fa-check"></i><span>Downloaded</span>';
-            button.style.background = 'rgba(6, 255, 165, 0.2)';
-            button.style.borderColor = 'rgba(6, 255, 165, 0.4)';
+            button.innerHTML = '<i class="fas fa-check"></i><span>Downloaded!</span>';
+            button.style.background = 'linear-gradient(135deg, #06ffa5 0%, #00c853 100%)';
         }, 2000);
         
         // Reset after delay
@@ -124,9 +136,7 @@ document.addEventListener('DOMContentLoaded', function() {
             button.innerHTML = originalButtonText;
             button.style.pointerEvents = 'auto';
             button.style.background = '';
-            button.style.borderColor = '';
-            progressFill.style.width = '0%';
-            progressText.textContent = 'Click to download';
+            button.style.opacity = '';
         }, 4000);
     }
 

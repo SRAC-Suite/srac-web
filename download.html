@@ -9,14 +9,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Colorful Galaxy Background -->
+    <!-- Simplified Cosmic Background -->
     <div class="galaxy-container">
-        <div class="galaxy-layer galaxy-1"></div>
-        <div class="galaxy-layer galaxy-2"></div>
-        <div class="galaxy-layer galaxy-3"></div>
-        <div class="stars-field"></div>
-        <div class="cosmic-particles"></div>
-        <div class="nebula-glow"></div>
+        <div class="static-stars"></div>
+        <div class="cosmic-gradient"></div>
     </div>
     
     <header class="header">
@@ -60,7 +56,7 @@
                     <div class="hero-actions">
                         <button class="btn btn-primary" id="downloadBtn">
                             <i class="fas fa-download"></i>
-                            Download SRAC-DM (First)
+                            Download SRAC-DM
                         </button>
                         <button class="btn btn-secondary" id="watchDemo">
                             <i class="fas fa-play"></i>
@@ -104,7 +100,7 @@
                                     <span class="prompt">srac@system</span>
                                     <span class="path">~</span>
                                     <span class="command-cursor">$</span>
-                                    <span class="command-text">srac --version</span>
+                                    <span class="command-text"><span class="cmd-name">srac</span> <span class="cmd-flag">--version</span></span>
                                 </div>
                                 <div class="terminal-line output-line">
                                     <span class="output-text">SRAC v1.0.0 - Student Result Analysis Compiler</span>
@@ -114,7 +110,7 @@
                                     <span class="prompt">srac@system</span>
                                     <span class="path">~</span>
                                     <span class="command-cursor">$</span>
-                                    <span class="command-text">srac analyze --students 540 --format pdf</span>
+                                    <span class="command-text"><span class="cmd-name">srac</span> <span class="cmd-name">analyze</span> <span class="cmd-flag">--students</span> <span class="cmd-value">540</span> <span class="cmd-flag">--format</span> <span class="cmd-value">pdf</span></span>
                                 </div>
                                 <div class="terminal-line output-line success">
                                     <div class="progress-indicator">
@@ -123,7 +119,16 @@
                                         </div>
                                         <span class="progress-text">540 students processed in 15 minutes</span>
                                     </div>
-                                    <div class="performance-badge">⚡ 99.1% faster than manual</div>
+                                    <div class="performance-badge">⚡ 99.1% faster than manual Method</div>
+                                </div>
+                                <div class="terminal-line">
+                                    <span class="prompt">srac@system</span>
+                                    <span class="path">~</span>
+                                    <span class="command-cursor">$</span>
+                                    <span class="command-text">Thank you 💕</span>
+                                </div>
+                                <div class="terminal-line output-line">
+                                    <span class="output-text">Your welcome 💙</span>
                                 </div>
                                 <div class="terminal-line">
                                     <span class="prompt">srac@system</span>
@@ -132,7 +137,6 @@
                                 </div>
                             </div>
                             <div class="glass-reflection"></div>
-                            <div class="liquid-animation"></div>
                         </div>
                     </div>
                 </div>
@@ -182,8 +186,8 @@
                     <div class="notice-content">
                         <i class="fas fa-info-circle"></i>
                         <div>
-                            <h3>Important: Download Order</h3>
-                            <p>Download and install both files in the specified order for proper functionality.</p>
+                            <h3>Important: Installation Order</h3>
+                            <p>Download and install both files in the specified order for proper functionality. Currently available for Windows 10/11 (64-bit) only.</p>
                         </div>
                     </div>
                 </div>
@@ -209,12 +213,12 @@
                                     <span class="prompt">srac@system:</span>
                                     <span class="path">~/dependencies</span>
                                     <span class="command-cursor">$</span>
-                                    <span class="command-text">./check-dependencies.sh</span>
+                                    <span class="command-text"><span class="cmd-file">SRAC-DM.exe</span> <span class="cmd-flag">--check</span></span>
                                 </div>
                                 <div class="terminal-line output-line">
                                     <span class="output-text">
                                         <i class="fas fa-info-circle" style="color: var(--galaxy-blue);"></i>
-                                        Dependency Manager - Install First
+                                        Step 1: Install Dependencies (SRAC-DM)
                                     </span>
                                 </div>
                                 <div class="terminal-line output-line">
@@ -230,20 +234,13 @@
                                     </span>
                                 </div>
                                 <div class="download-terminal-footer">
-                                    <div class="progress-indicator">
-                                        <div class="progress-bar">
-                                            <div class="progress-fill"></div>
-                                        </div>
-                                        <span class="progress-text">Click to download</span>
-                                    </div>
-                                    <button class="btn-terminal-download" data-file="dm">
+                                    <button class="btn-terminal-download primary-download" data-file="dm">
                                         <i class="fas fa-download"></i>
                                         <span>Download SRAC-DM</span>
                                     </button>
                                 </div>
                             </div>
                             <div class="glass-reflection"></div>
-                            <div class="liquid-animation"></div>
                         </div>
                     </div>
                     
@@ -268,12 +265,12 @@
                                     <span class="prompt">srac@system:</span>
                                     <span class="path">~/application</span>
                                     <span class="command-cursor">$</span>
-                                    <span class="command-text">./launch-srac.sh</span>
+                                    <span class="command-text"><span class="cmd-file">SRAC.exe</span> <span class="cmd-flag">--version</span></span>
                                 </div>
                                 <div class="terminal-line output-line">
                                     <span class="output-text">
                                         <i class="fas fa-desktop" style="color: var(--galaxy-purple);"></i>
-                                        Main Application - Install Second
+                                        Step 2: Install Main Application (SRAC)
                                     </span>
                                 </div>
                                 <div class="terminal-line output-line">
@@ -285,57 +282,59 @@
                                 <div class="terminal-line output-line success">
                                     <span class="output-text">
                                         <i class="fab fa-windows" style="color: var(--galaxy-blue);"></i>
-                                        Windows 10/11 (64-bit)
+                                        Windows 10/11 (64-bit) • <span style="color: var(--text-muted);">macOS & Linux coming when I afford a MacBook 😄</span>
                                     </span>
                                 </div>
                                 <div class="download-terminal-footer">
-                                    <div class="progress-indicator">
-                                        <div class="progress-bar">
-                                            <div class="progress-fill"></div>
-                                        </div>
-                                        <span class="progress-text">Click to download</span>
-                                    </div>
-                                    <button class="btn-terminal-download" data-file="app">
+                                    <button class="btn-terminal-download secondary-download" data-file="app">
                                         <i class="fas fa-download"></i>
                                         <span>Download SRAC</span>
                                     </button>
                                 </div>
                             </div>
                             <div class="glass-reflection"></div>
-                            <div class="liquid-animation"></div>
                         </div>
                     </div>
                 </div>
                 
                 <div class="installation-steps">
-                    <h3>Installation Steps</h3>
+                    <h3>Installation Guide</h3>
                     <div class="steps-grid">
                         <div class="step">
                             <div class="step-number">1</div>
                             <div class="step-content">
-                                <h4>Run SRAC-DM.exe</h4>
-                                <p>As Administrator and install all dependencies</p>
+                                <h4>Install Dependencies</h4>
+                                <p>Run SRAC-DM.exe as Administrator to install required dependencies</p>
                             </div>
                         </div>
                         <div class="step">
                             <div class="step-number">2</div>
                             <div class="step-content">
-                                <h4>Check Status</h4>
-                                <p>Ensure all dependencies show GREEN status</p>
+                                <h4>Verify Status</h4>
+                                <p>Ensure all dependencies show GREEN ✅ status in the installer</p>
                             </div>
                         </div>
                         <div class="step">
                             <div class="step-number">3</div>
                             <div class="step-content">
-                                <h4>Restart Computer</h4>
-                                <p>Required for proper functionality</p>
+                                <h4>Restart Your PC</h4>
+                                <p>Restart your computer after installing SRAC-DM before running SRAC.exe</p>
                             </div>
                         </div>
                         <div class="step">
                             <div class="step-number">4</div>
                             <div class="step-content">
-                                <h4>Run SRAC.exe</h4>
-                                <p>Install the main application</p>
+                                <h4>Install Main App</h4>
+                                <p>Run SRAC.exe to install the main application</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="installation-note">
+                        <div class="note-content">
+                            <i class="fas fa-lightbulb"></i>
+                            <div>
+                                <strong>💡 Pro Tip:</strong>
+                                <p>If you encounter any issues, ensure Windows Defender/antivirus is not blocking the installation, and verify you have administrator privileges.</p>
                             </div>
                         </div>
                     </div>

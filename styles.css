@@ -530,6 +530,13 @@ hr {border: none;height: 1px;background: rgba(255, 255, 255, 0.1);margin: 1.5rem
     flex-direction: column;
     cursor: pointer;
     z-index: 1001;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.3s;
+}
+
+.hamburger-modern:hover {
+    background: rgba(88, 166, 255, 0.1);
 }
 
 .hamburger-modern span {
@@ -539,6 +546,18 @@ hr {border: none;height: 1px;background: rgba(255, 255, 255, 0.1);margin: 1.5rem
     margin: 3px 0;
     transition: all 0.3s;
     border-radius: 2px;
+}
+
+.hamburger-modern.active span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburger-modern.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger-modern.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -6px);
 }
 
 /* Components Section */
@@ -819,6 +838,10 @@ hr {border: none;height: 1px;background: rgba(255, 255, 255, 0.1);margin: 1.5rem
 
 /* Mobile Responsive */
 @media (max-width: 768px) {
+    .nav-container-modern {
+        padding: 0 20px;
+    }
+    
     .navbar-modern .nav-menu-modern {
         position: fixed;
         left: -100%;
@@ -831,10 +854,30 @@ hr {border: none;height: 1px;background: rgba(255, 255, 255, 0.1);margin: 1.5rem
         transition: all 0.3s;
         padding: 2rem 0;
         border-top: 1px solid rgba(88, 166, 255, 0.2);
+        height: calc(100vh - 70px);
+        overflow-y: auto;
     }
     
     .nav-menu-modern.active {
         left: 0;
+    }
+    
+    .nav-menu-modern li {
+        margin: 10px 0;
+    }
+    
+    .nav-link-modern {
+        display: block;
+        padding: 15px 20px;
+        font-size: 1.1rem;
+        border-radius: 8px;
+        margin: 0 20px;
+        transition: all 0.3s;
+    }
+    
+    .nav-link-modern:hover {
+        background: rgba(88, 166, 255, 0.1);
+        color: #58a6ff;
     }
     
     .hamburger-modern {
@@ -845,6 +888,21 @@ hr {border: none;height: 1px;background: rgba(255, 255, 255, 0.1);margin: 1.5rem
         display: none;
     }
     
+    .hero-container {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        text-align: center;
+    }
+    
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .hero-stats {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
     .components-grid {
         grid-template-columns: 1fr;
         gap: 16px;
@@ -852,6 +910,7 @@ hr {border: none;height: 1px;background: rgba(255, 255, 255, 0.1);margin: 1.5rem
     
     .quick-actions {
         justify-content: center;
+        flex-wrap: wrap;
     }
 }
 
