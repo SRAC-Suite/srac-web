@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SRAC Analysis Service - Pricing Calculator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="pricing.css">
+</head>
+<body>
+    <div class="cosmic-background">
+        <canvas id="starfield-canvas" class="starfield-canvas"></canvas>
+        <div class="nebula-layer"></div>
+        <div class="cosmic-particles"></div>
+        
+        <div class="earth-container">
+            <div class="earth">
+                <div class="earth-atmosphere"></div>
+                <div class="earth-clouds"></div>
+                <div class="earth-continents">
+                    <div class="continent continent-1"></div>
+                    <div class="continent continent-2"></div>
+                    <div class="continent continent-3"></div>
+                </div>
+                <div class="satellite satellite1"></div>
+                <div class="satellite satellite2"></div>
+                <div class="satellite satellite3"></div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="navbar-cosmic">
+        <div class="nav-container-cosmic">
+            <div class="nav-logo-cosmic">
+                <div class="logo-icon-cosmic">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                SRAC Analysis Service
+            </div>
+            <div class="mobile-menu-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+            <ul class="nav-menu-cosmic">
+                <li><a href="index.html" class="nav-link-cosmic">Home</a></li>
+                <li><a href="capabilities.html" class="nav-link-cosmic">Capabilities</a></li>
+                <li><a href="use_case.html" class="nav-link-cosmic">Use Cases</a></li>
+                <li><a href="FAQ.html" class="nav-link-cosmic">FAQ</a></li>
+                <li><a href="comparison.html" class="nav-link-cosmic">Comparison</a></li>
+                <li><a href="pricing.html" class="nav-link-cosmic active">Pricing</a></li>
+                <li><a href="https://tanishq-jm.github.io/SRAC-Teacher-Hub/" class="nav-link-cosmic" target="_blank" rel="noopener">GRAPH GENERATOR</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="hero-pricing">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="cosmic-title">
+                    <span class="gradient-text">SRAC Academic Analysis Software</span>
+                </h1>
+                <p class="cosmic-subtitle">Professional Result Analysis - One Semester FREE, Then Affordable Licensing</p>
+                <div class="availability-notice">
+                    <i class="fas fa-gift"></i>
+                    <span>One Semester Analysis FREE - No Hidden Costs</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="pricing-tiers">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">Simple Pricing Structure</h2>
+            <div class="tiers-grid">
+                <div class="tier-card featured" data-tier="free-trial" data-aos="fade-up" data-aos-delay="100">
+                    <div class="featured-badge">Free Trial</div>
+                    <div class="tier-header">
+                        <h3>One Semester FREE</h3>
+                        <div class="tier-price">₹0</div>
+                        <div class="tier-time">Complete Semester Result Analysis | No Limitations</div>
+                    </div>
+                    <div class="tier-features">
+                        <ul>
+                            <li><i class="fas fa-gift"></i> One Semester Analysis FREE</li>
+                            <li><i class="fas fa-download"></i> Instant Download & Installation</li>
+                            <li><i class="fas fa-chart-bar"></i> All Standard Features Included</li>
+                            <li><i class="fas fa-tools"></i> Complete Setup & Configuration</li>
+                            <li><i class="fas fa-users"></i> Faculty & College Management Access</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="tier-card" data-tier="continued" data-aos="fade-up" data-aos-delay="300">
+                    <div class="featured-badge">Continued Use</div>
+                    <div class="tier-header">
+                        <h3>After Free Trial</h3>
+                        <div class="tier-price">₹10K - ₹20K</div>
+                        <div class="tier-time">Annual License | Not more than $250 USD</div>
+                    </div>
+                    <div class="tier-features">
+                        <ul>
+                            <li><i class="fas fa-calculator"></i> Pricing Based on Usage & Requirements</li>
+                            <li><i class="fas fa-rupee-sign"></i> ₹10K - ₹20K INR Annually (Max $250 USD)</li>
+                            <li><i class="fas fa-handshake"></i> Faculty & Management Access Only</li>
+                            <li><i class="fas fa-headset"></i> Connect me on linkedin</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <section class="availability-section">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">🚀 Get Started - One Semester FREE</h2>
+            <p class="section-subtitle">Download and start using SRAC immediately - No payment required for your first semester</p>
+            
+            <div class="download-container">
+                <div class="download-card featured" data-aos="fade-up" data-aos-delay="200">
+                    <div class="download-header">
+                        <div class="download-icon">
+                            <i class="fas fa-download"></i>
+                        </div>
+                        <h3>Instant Download Available</h3>
+                        <p>Professional institutional software package ready for immediate download</p>
+                    </div>
+                    
+                    <div class="download-features">
+                        <div class="feature-item">
+                            <i class="fas fa-gift"></i>
+                            <span>One Complete Semester FREE</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-user-tie"></i>
+                            <span>Faculty & Management Access Only</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-download"></i>
+                            <span>Ready to Use Immediately</span>
+                        </div>
+                    </div>
+                    
+                    <div class="download-action">
+                        <button class="btn-download-now" onclick="downloadSRAC()" data-aos="zoom-in" data-aos-delay="500">
+                            <i class="fas fa-download"></i> 
+                            Instant Download
+                        </button>
+                        <p class="download-note">
+                            <i class="fas fa-info-circle"></i>
+                            No payment required - Start your free semester analysis immediately
+                        </p>
+                    </div>
+                </div>
+
+                <div class="contact-access" data-aos="fade-left" data-aos-delay="400">
+                    <h3><i class="fas fa-key"></i> Get Free Activation Key</h3>
+                    <div class="activation-info">
+                        <div class="activation-card">
+                            <div class="activation-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div class="activation-content">
+                                <h4>Faculty & Management Only</h4>
+                                <p>SRAC is exclusively designed for college faculty and management to calculate semester end results. Student access is strictly prohibited to maintain institutional security.</p>
+                                <div class="contact-action">
+                                    <a href="https://linkedin.com/in/tanishq-jm" target="_blank" class="btn-activation" data-aos="pulse" data-aos-delay="600">
+                                        <i class="fab fa-linkedin"></i>
+                                        Contact for FREE Activation Key
+                                    </a>
+                                    <p class="activation-note">Same institution gets the same free activation key</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer-minimal">
+        <div class="footer-content">
+            <div class="footer-main">
+                <div class="footer-brand">
+                    <div class="logo-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <div class="brand-info">
+                        <h3>SRAC Analysis Service</h3>
+                        <p>Student Result Analysis Compiler</p>
+                    </div>
+                </div>
+                
+                <div class="footer-links">
+                    <div class="links-group">
+                        <a href="index.html">Home</a>
+                        <a href="capabilities.html">Capabilities</a>
+                        <a href="use_case.html">Use Cases</a>
+                        <a href="FAQ.html">FAQ</a>
+                        <a href="comparison.html">Comparison</a>
+                        <a href="pricing.html">Pricing</a>
+                        <a href="https://tanishq-jm.github.io/SRAC-Teacher-Hub/" target="_blank" rel="noopener">Graph Generator</a>
+                    </div>
+                </div>
+                
+                <div class="footer-contact">
+                    <div class="contact-item">
+                        <i class="fab fa-linkedin"></i>
+                        <a href="https://linkedin.com/in/tanishq-jm" target="_blank" rel="noopener">Connect on LinkedIn</a>
+                    </div>
+                    <div class="quick-info">
+                        <span><i class="fas fa-gift"></i> One Semester FREE</span>
+                        <span><i class="fas fa-shield-alt"></i> Faculty Only Access</span>
+                        <span><i class="fas fa-download"></i> Instant Download</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <div class="copyright">
+                    <p>&copy; 2025 SRAC - Student Result Analysis Compiler. All rights reserved.</p>
+                </div>
+                <div class="developer">
+                    Developed by <strong>Tanishq JM</strong> at ACS College of Engineering
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <script src="pricing.js"></script>
+</body>
+</html>
