@@ -53,8 +53,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     const downloadUrls = {
-        dm: 'https://github.com/SRAC-Suite/vtu-result-analysis/releases/download/v1.0.0/SRAC-DM.exe',
-        app: 'https://github.com/SRAC-Suite/vtu-result-analysis/releases/download/v1.0.0/SRAC.exe'
+        dm: 'https://github.com/SRAC-Suite/SRAC/releases/download/v1.0.0/SRAC-DM.exe',
+        app: 'https://github.com/SRAC-Suite/SRAC/releases/download/v1.0.0/SRAC.exe'
     };
 
     const watchDemo = document.getElementById('watchDemo');
